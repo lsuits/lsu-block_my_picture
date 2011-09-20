@@ -29,28 +29,19 @@ File any bugs, improvements, or feature requiests in our [issue tracker][issues]
 
 ## License
 
-Quickmail adopts the same license that Moodle does.
+My Profile Picture adopts the same license that Moodle does.
 
 ## Screenshots
 
-![Block][block]
 
 ---
 
-![Email][email]
 
 ---
 
-![Signatures][signature]
 
 ---
 
-![Configuration][config]
 
 [quickmail_github]: https://github.com/lsuits/my_picture
 [block_doc]: http://docs.moodle.org/20/en/Installing_contributed_modules_or_plugins#Block_installation
-[block]: https://tigerbytes2.lsu.edu/users/pcali1/work/block.png
-[config]: https://tigerbytes2.lsu.edu/users/pcali1/work/config.png
-[signature]: https://tigerbytes2.lsu.edu/users/pcali1/work/signature.png
-[email]: https://tigerbytes2.lsu.edu/users/pcali1/work/email.png
-[issues]: https://github.com/lsuits/my_picture/issues
