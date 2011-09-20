@@ -8,7 +8,6 @@ function mypic_get_users_without_pictures() {
     $params = array('picture' => 0, 'deleted' => 0);
 
     return $DB->get_records('user', $params);
-print_r($params);
 }
 
 function mypic_insert_picture($userid, $picture_path) {
