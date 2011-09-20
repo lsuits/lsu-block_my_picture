@@ -52,7 +52,7 @@ class block_my_picture extends block_list {
         $users = mypic_get_users_without_pictures($cron_num_users);
 
         if (!$users) {
-            echo $_s('no_missing_pictures') . "\n";
+            echo $_s('no_missing_pictures') . '<br />';
         } else {
             mypic_batch_update($users);
         }
