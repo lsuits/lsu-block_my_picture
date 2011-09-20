@@ -12,7 +12,7 @@ My Profile Picture is a Moodle block that interfaces with a web service to impor
 
 ## Download
 
-Visit [My Profile Picture's Github page][quickmail_my_picture] to either download a package or clone the git repository.
+Visit [My Profile Picture's Github page][my_picture_github] to either download a package or clone the git repository.
 
 ## Installation
 
@@ -43,5 +43,5 @@ My Profile Picture adopts the same license that Moodle does.
 ---
 
 
-[quickmail_github]: https://github.com/lsuits/my_picture
+[my_picture_github]: https://github.com/lsuits/my_picture
 [block_doc]: http://docs.moodle.org/20/en/Installing_contributed_modules_or_plugins#Block_installation
