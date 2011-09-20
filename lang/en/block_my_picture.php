@@ -33,11 +33,13 @@ $string['error_admin'] = 'Could not create picture on this server';
 $string['bad_id_admin'] = 'Invalid idnumber';
 $string['nopic_admin'] = 'Not found';
 $string['success'] = 'Success';
-$string['no_missing_pictures'] = 'There were no missing profile picutres in the system';
+$string['no_missing_pictures'] = 'There were no missing profile pictures in the system';
 
 // Strings for settings.php
 $string['cron_users'] = 'Cron Users';
 $string['cron_users_desc'] = 'Number of users to process per cron run';
+$string['webservice_url'] = 'myPicture WebService URL';
+$string['url'] = 'URL';
 $string['reprocess_all'] = 'Reprocess all profile pictures';
 $string['fetch_missing'] = 'Fetch all missing profile pictures';
 

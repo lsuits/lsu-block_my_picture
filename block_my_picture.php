@@ -3,12 +3,11 @@
 // Author: Adam Zapletal
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once('lib.php');
+require_once($CFG->dirroot . '/blocks/my_picture/lib.php');
 
 class block_my_picture extends block_list {
     function init() {
         $this->title = get_string('pluginname', 'block_my_picture');
-        $this->cron = 3600;
     }
 
     function get_content() {
@@ -52,8 +51,8 @@ class block_my_picture extends block_list {
 
         $users = mypic_get_users_without_pictures($cron_num_users);
 
-        if ($users) {
-            echo $_s('no_missing_pictures') . '<br />';
+        if (!$users) {
+            echo $_s('no_missing_pictures') . "\n";
         } else {
             mypic_batch_update($users);
         }

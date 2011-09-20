@@ -10,3 +10,10 @@
 #blocks-my_picture-reprocess_all {
     text-align: left;
 }
+
+#page-admin-setting-blocksettingmy_picture div.settingsform fieldset {
+   background-color: #fff;
+   box-shadow: 0 0 10px #bbb; 
+   margin: 0 10px;
+   padding: 10px;
+}

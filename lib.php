@@ -8,6 +8,7 @@ function mypic_get_users_without_pictures() {
     $params = array('picture' => 0, 'deleted' => 0);
 
     return $DB->get_records('user', $params);
+print_r($params);
 }
 
 function mypic_insert_picture($userid, $picture_path) {
@@ -41,7 +42,7 @@ function mypic_insert_badid($userid) {
 function mypic_fetch_picture($idnumber) {
     global $CFG;
 
-    $url = 'https://moodleftp.lsu.edu/index.php';
+    $url = $CFG->block_my_picture_webservice_url;
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
