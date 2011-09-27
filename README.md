@@ -16,10 +16,13 @@ Visit [My Profile Picture's Github page][my_picture_github] to either download a
 
 ## Installation
 
-* The My Profile Picture block should be installed like any other block. See [the Moodle Docs page on block installation][block_doc].
-* The webservice should be copied to any php server that can mount the Blackboard Ecommerce Server's data folder.
- * The web server the webservice resides on should allow https communications.
- * The web server the webservice resides on should be locked down to only allow connections from the Moodle server.
+The My Profile Picture block should be installed like any other block. See [the Moodle Docs page on block installation][block_doc].
+
+## Configuration
+
+The My Profile Picture block makes use of an external webservice for profile
+picture replacements. Besure that the url is a valid url, and can be accessed
+from your application server via http request.
 
 ## Contributions
 
@@ -31,17 +34,6 @@ File any bugs, improvements, or feature requiests in our [issue tracker][issues]
 
 My Profile Picture adopts the same license that Moodle does.
 
-## Screenshots
-
-
----
-
-
----
-
-
----
-
-
 [my_picture_github]: https://github.com/lsuits/my_picture
 [block_doc]: http://docs.moodle.org/20/en/Installing_contributed_modules_or_plugins#Block_installation
+[issues]: https://github.com/lsuits/my_picture/issues
