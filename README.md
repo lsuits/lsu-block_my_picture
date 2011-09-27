@@ -21,7 +21,7 @@ The My Profile Picture block should be installed like any other block. See [the 
 ## Configuration
 
 The My Profile Picture block makes use of an external webservice for profile
-picture replacements. Besure that the url is a valid url, and can be accessed
+picture replacements. Be sure that the url is a valid url, and can be accessed
 from your application server via http request.
 
 ## Contributions
