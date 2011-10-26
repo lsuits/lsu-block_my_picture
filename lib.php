@@ -2,12 +2,12 @@
 
 require_once($CFG->libdir . '/gdlib.php');
 
-function mypic_get_users_without_pictures() {
+function mypic_get_users_without_pictures($limit=0) {
     global $DB;
 
     $params = array('picture' => 0, 'deleted' => 0);
 
-    return $DB->get_records('user', $params);
+    return $DB->get_records('user', $params, '', '*', 0, $limit);
 }
 
 function mypic_insert_picture($userid, $picture_path) {
