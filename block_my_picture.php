@@ -56,5 +56,7 @@ class block_my_picture extends block_list {
         } else {
             mypic_batch_update($users);
         }
+        
+        return true;
     }
 }
