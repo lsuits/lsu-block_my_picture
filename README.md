@@ -22,7 +22,9 @@ The My Profile Picture block should be installed like any other block. See [the 
 
 The My Profile Picture block makes use of an external webservice for profile
 picture replacements. Be sure that the url is a valid url, and can be accessed
-from your application server via http request.
+from your application server via http request. The application hashes the
+idnumber with the current time via sha1 hash `($time . $idnumber)`. This value
+is injected into the setting as a standard `sprintf` formatted string.
 
 ## Contributions
 
