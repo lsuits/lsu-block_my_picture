@@ -42,8 +42,7 @@ function mypic_insert_badid($userid) {
 function mypic_fetch_picture($idnumber) {
     global $CFG;
 
-    $time = strftime("%Y%m%d%H");
-    $hash = hash("sha256", "$time$idnumber");
+    $hash = hash("sha256", $idnumber);
 
     $url = sprintf(get_config('moodle', 'block_my_picture_webservice_url'), $hash);
 
