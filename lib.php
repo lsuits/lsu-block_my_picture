@@ -1,6 +1,7 @@
 <?php
 
 require_once($CFG->libdir . '/gdlib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 function mypic_get_users_without_pictures($limit=0) {
     global $DB;
@@ -41,23 +42,20 @@ function mypic_insert_badid($userid) {
 function mypic_fetch_picture($idnumber) {
     global $CFG;
 
-    $url = $CFG->block_my_picture_webservice_url;
+    $time = strftime("%Y%m%d%H");
+    $hash = hash("sha256", "$time$idnumber");
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, 'idnumber=' . $idnumber);
+    $url = sprintf(get_config('moodle', 'block_my_picture_webservice_url'), $hash);
 
     $filename = $idnumber . '.jpg';
     $fullpath = $CFG->dataroot . '/temp/' . $filename;
-
     $fp = fopen($fullpath, 'w');
 
-    curl_setopt($ch, CURLOPT_FILE, $fp);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    $curl = new curl();
+    $curl->download(array(
+        array('url' => $url, 'file' => $fp)
+    ));
 
-    curl_exec($ch);
-
-    curl_close($ch);
     fclose($fp);
 
     if (!filesize($fullpath)) {
