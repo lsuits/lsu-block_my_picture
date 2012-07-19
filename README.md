@@ -5,7 +5,7 @@ My Profile Picture is a Moodle block that interfaces with a web service to impor
 ## Features
 
 * PHP webservice based
-* Imports photos via cron 
+* Imports photos via cron
 * Automated
 * Users can reprocess their photos from the official pool
 * Stops users from uploading their own pictures

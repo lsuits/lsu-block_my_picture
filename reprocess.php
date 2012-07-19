@@ -14,6 +14,7 @@ $pluginname = $_s('pluginname');
 
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 $PAGE->set_url('/blocks/my_picture/reprocess.php');
+$PAGE->navbar->add($pluginname);
 $PAGE->navbar->add($header);
 $PAGE->set_title($pluginname . ': ' . $header);
 $PAGE->set_heading($SITE->shortname . ': ' . $pluginname);
@@ -28,6 +29,11 @@ $result_map = array(
     3 => 'nopic_user'
 );
 
-echo '<div>' . $_s($result_map[mypic_update_picture($USER)]) . '</div>';
+$result = mypic_update_picture($USER);
+$class = $result == 2 ? 'notifysuccess' : 'notifyproblem';
+
+echo $OUTPUT->notification($_s($result_map[$result]), $class);
+
+echo $OUTPUT->continue_button(new moodle_url('/my'));
 
 echo $OUTPUT->footer();
