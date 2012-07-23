@@ -43,20 +43,24 @@ class block_my_picture extends block_list {
             return get_string($k, 'block_my_picture', $a);
         };
 
+        $params = array('name' => 'my_picture');
+
+        $cron = $DB->get_field('block', 'cron', $params);
+        $lastcron = $DB->get_field('block', 'lastcron', $params);
+
+        // Chosen time would either be cron time, or the last run time
+        $start_time = min(time() - $cron, $lastcron);
+
         mtrace("\n" . $_s('start'));
 
-        $cron_num_users = $CFG->block_my_picture_cron_users;
-
-        mtrace($_s('fetched', $cron_num_users));
-
-        $users = mypic_get_users_without_pictures($cron_num_users);
+        $users = mypic_get_users_updated_pictures($start_time);
 
         if (!$users) {
             echo $_s('no_missing_pictures') . '<br />';
         } else {
             mypic_batch_update($users);
         }
-        
+
         return true;
     }
 }

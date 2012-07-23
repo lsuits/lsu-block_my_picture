@@ -39,6 +39,7 @@ $string['no_missing_pictures'] = 'There were no missing profile pictures in the 
 $string['cron_users'] = 'Cron Users';
 $string['cron_users_desc'] = 'Number of users to process per cron run';
 $string['webservice_url'] = 'myPicture WebService URL';
+$string['ready_url'] = 'myPicture Ready URL';
 $string['url'] = 'URL';
 $string['reprocess_all'] = 'Reprocess all profile pictures';
 $string['fetch_missing'] = 'Fetch all missing profile pictures';

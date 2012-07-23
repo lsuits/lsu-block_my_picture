@@ -3,12 +3,26 @@
 require_once($CFG->libdir . '/gdlib.php');
 require_once($CFG->libdir . '/filelib.php');
 
-function mypic_get_users_without_pictures($limit=0) {
-    global $DB;
+function mypic_get_users_updated_pictures($start_time) {
+    $start_date = strftime("%Y%m%d%H", $start_time);
 
-    $params = array('picture' => 0, 'deleted' => 0);
+    $ready_url = get_config('block_my_picture', 'ready_url');
 
-    return $DB->get_records('user', $params, '', '*', 0, $limit);
+    $curl = new curl();
+    $json = $curl->get(sprintf($ready_url, $start_date));
+
+    $res = json_decode($json);
+
+    $to_moodle = function($user) {
+        $user->firstname = $user->first_name;
+        $user->lastname = $user->last_name;
+        $user->idnumber = $user->id_number;
+
+        unset($user->first_name, $user->last_name, $user->id_number);
+        return $user;
+    };
+
+    return empty($res->users) ? array() : array_map($to_moodle, $res->users);
 }
 
 function mypic_insert_picture($userid, $picture_path) {
@@ -44,16 +58,14 @@ function mypic_fetch_picture($idnumber) {
 
     $hash = hash("sha256", $idnumber);
 
-    $url = sprintf(get_config('moodle', 'block_my_picture_webservice_url'), $hash);
+    $url = sprintf(get_config('block_my_picture', 'webservice_url'), $hash);
 
     $filename = $idnumber . '.jpg';
     $fullpath = $CFG->dataroot . '/temp/' . $filename;
     $fp = fopen($fullpath, 'w');
 
     $curl = new curl();
-    $curl->download(array(
-        array('url' => $url, 'file' => $fp)
-    ));
+    $curl->download(array(array('url' => $url, 'file' => $fp)));
 
     fclose($fp);
 
