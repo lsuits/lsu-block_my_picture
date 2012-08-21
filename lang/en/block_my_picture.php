@@ -36,6 +36,8 @@ $string['success'] = 'Success';
 $string['no_missing_pictures'] = 'There were no missing profile pictures in the system';
 
 // Strings for settings.php
+$string['fetch'] = 'Fectch missing on cron';
+$string['fetch_desc'] = 'At every cron interval, _My Profile Picture_ will fetch missing photos.';
 $string['cron_users'] = 'Cron Users';
 $string['cron_users_desc'] = 'Number of users to process per cron run';
 $string['webservice_url'] = 'myPicture WebService URL';

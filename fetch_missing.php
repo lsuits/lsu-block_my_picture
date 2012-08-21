@@ -30,7 +30,9 @@ echo '<div>';
 
 echo $_s('fetching_start') . '<br />';
 
-$users = mypic_get_users_without_pictures();
+$limit = get_config('block_my_picture', 'cron_users');
+
+$users = mypic_get_users_without_pictures($limit);
 
 if ($users) {
     mypic_batch_update($users, '<br />');

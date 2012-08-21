@@ -43,17 +43,22 @@ class block_my_picture extends block_list {
             return get_string($k, 'block_my_picture', $a);
         };
 
-        $params = array('name' => 'my_picture');
-
-        $cron = $DB->get_field('block', 'cron', $params);
-        $lastcron = $DB->get_field('block', 'lastcron', $params);
-
-        // Chosen time would either be cron time, or the last run time
-        $start_time = min(time() - $cron, $lastcron);
-
         mtrace("\n" . $_s('start'));
 
-        $users = mypic_get_users_updated_pictures($start_time);
+        if (get_config('block_my_picture', 'fetch')) {
+            $limit = get_config('block_my_picture', 'cron_users');
+            $users = mypic_get_users_without_pictures($limit);
+        } else {
+            $params = array('name' => 'my_picture');
+
+            $cron = $DB->get_field('block', 'cron', $params);
+            $lastcron = $DB->get_field('block', 'lastcron', $params);
+
+            // Chosen time would either be cron time, or the last run time
+            $start_time = min(time() - $cron, $lastcron);
+
+            $users = mypic_get_users_updated_pictures($start_time);
+        }
 
         if (!$users) {
             echo $_s('no_missing_pictures') . '<br />';

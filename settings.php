@@ -12,6 +12,12 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('block_my_picture/ready_url',
         $_s('ready_url'), $_s('url'), $default_url));
 
+    $settings->add(new admin_setting_configcheckbox('block_my_picture/fetch',
+        $_s('fetch'), $_s('fetch_desc'), 1));
+
+    $settings->add(new admin_setting_configtext('block_my_picture/cron_users',
+        $_s('cron_users'), $_s('cron_users_desc'), 100));
+
     $reprocess_all_link = '<a href = "' . $CFG->wwwroot . '/blocks/my_picture/reprocess_all.php">' . $_s('reprocess_all') . '</a>';
     $fetch_missing_link = '<a href = "' . $CFG->wwwroot . '/blocks/my_picture/fetch_missing.php">' . $_s('fetch_missing') . '</a>';
 
