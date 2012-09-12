@@ -34,7 +34,8 @@ echo '<div>';
 
 echo $_s('all_start') . '<br />';
 
-mypic_batch_update($users, '<br />');
+$force_update = true;
+mypic_batch_update($users, $force_update, '<br />');
 
 echo '</div>';
 

@@ -61,18 +61,46 @@ function mypic_insert_badid($userid) {
     return mypic_insert_picture($userid, $badid_path);
 }
 
-function mypic_fetch_picture($idnumber) {
+function mypic_force_update_picture($idnumber, $hash = null) {
+    $url = get_config('block_my_picture', 'update_url');
+
+    if (empty($url)) {
+        return true;
+    }
+
+    if (empty($hash)) {
+        $hash = hash("sha256", $idnumber);
+    }
+
+    $curl = new curl();
+    $json = $curl->post(sprintf($url, $hash));
+
+    $obj = json_decode($json);
+
+    return (
+        isset($obj->photo) and
+        isset($obj->photo->success) and
+        !empty($obj->photo->success->status)
+    );
+}
+
+function mypic_fetch_picture($idnumber, $updating = false) {
     global $CFG;
 
     $hash = hash("sha256", $idnumber);
-
-    $url = sprintf(get_config('block_my_picture', 'webservice_url'), $hash);
 
     $filename = $idnumber . '.jpg';
     $fullpath = $CFG->dataroot . '/temp/' . $filename;
     $fp = fopen($fullpath, 'w');
 
     $curl = new curl();
+
+    // Could not update photo
+    if ($updating and !mypic_force_update_picture($idnumber, $hash)) {
+        return false;
+    }
+
+    $url = sprintf(get_config('block_my_picture', 'webservice_url'), $hash);
     $curl->download(array(array('url' => $url, 'file' => $fp)));
 
     fclose($fp);
@@ -94,19 +122,19 @@ function mypic_is_lsuid($idnumber) {
 // 1 - Bad idnumber, contact moodle admin picture inserted
 // 2 - Success, tiger card picture inserted
 // 3 - Picture not found, visit tiger card office picture inserted
-function mypic_update_picture($user) {
+function mypic_update_picture($user, $updating=false) {
     if (!mypic_is_lsuid($user->idnumber)) {
         return (int) mypic_insert_badid($user->id);
     }
 
-    if ($path = mypic_fetch_picture($user->idnumber)) {
+    if ($path = mypic_fetch_picture($user->idnumber, $updating)) {
         return (int) mypic_insert_picture($user->id, $path) * 2;
     }
 
     return (int) mypic_insert_nopic($user->id) * 3;
 }
 
-function mypic_batch_update($users, $sep='', $step=100) {
+function mypic_batch_update($users, $updating=false, $sep='', $step=100) {
     $_s = function($k, $a=null) {
         return get_string($k, 'block_my_picture', $a);
     };
@@ -126,7 +154,7 @@ function mypic_batch_update($users, $sep='', $step=100) {
             3 => 'num_nopic'
         );
 
-        $$result_map[mypic_update_picture($user)]++;
+        $$result_map[mypic_update_picture($user, $updating)]++;
 
         $count++;
 

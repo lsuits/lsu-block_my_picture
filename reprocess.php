@@ -29,7 +29,9 @@ $result_map = array(
     3 => 'nopic_user'
 );
 
-$result = mypic_update_picture($USER);
+// Force updating when user clicks reprocess
+$force_update = true;
+$result = mypic_update_picture($USER, $force_update);
 $class = $result == 2 ? 'notifysuccess' : 'notifyproblem';
 
 echo $OUTPUT->notification($_s($result_map[$result]), $class);

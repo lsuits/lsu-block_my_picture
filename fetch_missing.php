@@ -35,7 +35,8 @@ $limit = get_config('block_my_picture', 'cron_users');
 $users = mypic_get_users_without_pictures($limit);
 
 if ($users) {
-    mypic_batch_update($users, '<br />');
+    $force_update = false;
+    mypic_batch_update($users, $force_update, '<br />');
 } else {
     echo $_s('no_missing_pictures') . '<br />';
 }
