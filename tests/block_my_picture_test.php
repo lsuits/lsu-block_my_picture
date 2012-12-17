@@ -12,11 +12,6 @@ class block_my_picture_testcase extends advanced_testcase {
       
     
     
-    public function test_cron(){
-        global $DB;
-        $this->assertTrue(true);
-
-    }
     
     
 }

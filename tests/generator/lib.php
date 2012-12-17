@@ -20,6 +20,14 @@ class block_my_picture_generator extends phpunit_block_generator {
 
         $this->instancecount++;
 
+        $options = array(
+            'ready_url'     =>  'https://tt.lsu.edu/api/v2/json/kZabUZ6TZLcsYsCnV6KW/photos/recently_updated/%s',
+            'webservice_url'=>  'https://tt.lsu.edu/api/v2/jpg/kZabUZ6TZLcsYsCnV6KW/photos/lsuid/%s?skip_place_holder=true',
+            'update_url'    =>  'https://tt.lsu.edu/api/v2/jpg/kZabUZ6TZLcsYsCnV6KW/photos/lsuid/%s/update',
+            'fetch'         =>  1,
+            'cron_users'    =>  100
+        );
+        
         $record = (object)(array)$record;
         $options = (array)$options;
 
