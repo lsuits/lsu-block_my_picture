@@ -11,7 +11,11 @@ require_once(dirname(__FILE__) . '/../lib.php');
 class block_my_picture_testcase extends advanced_testcase {
       
     
-    
+    public function testNothing(){
+        
+        $this->assertTrue(true);
+        
+    }
     
     
 }

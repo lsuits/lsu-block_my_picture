@@ -5,7 +5,7 @@ global $CFG;
 require_once(dirname(__FILE__) . '/../../moodleblock.class.php');
 require_once(dirname(__FILE__) . '/../block_my_picture.php');
 require_once(dirname(__FILE__) . '/../lib.php');
-
+require_once('util.php');
 
 
 class lib_my_picture_testcase extends advanced_testcase{
@@ -53,7 +53,7 @@ class lib_my_picture_testcase extends advanced_testcase{
         global $DB;
         $this->resetAfterTest(true);
               
-        $this->setConfig();
+        setConfig();
                 
         $ready      = get_config('block_my_picture', 'ready_url');
         $update     = get_config('block_my_picture', 'update_url');
@@ -72,7 +72,7 @@ class lib_my_picture_testcase extends advanced_testcase{
     public function test_mypic_get_users_updated_pictures($usersSet){
         $this->resetAfterTest(true);
         //set up block configs
-        $this->setConfig();
+        setConfig();
         
         $users = mypic_get_users_updated_pictures(time()-1000000);
         $this->assertNotEmpty($users, "No results from webservice, check the time() param");
@@ -84,11 +84,11 @@ class lib_my_picture_testcase extends advanced_testcase{
 //     * 
 //     */
 //    public function test_mypic_insert_picture(){
-//        $this->setConfig();
+//        setConfig();
 //        global $CFG;
 //        global $DB;
 //        $this->resetAfterTest(true);
-//        $user = $this->generateUser('jpeak5', 890775049,false);
+//        $user = generateUser('jpeak5', 890775049,false);
 //        $this->assertTrue(is_array($user));
 //        
 //        
@@ -106,9 +106,9 @@ class lib_my_picture_testcase extends advanced_testcase{
     
     public function test_mypic_update_picture(){
         $this->resetAfterTest(true);
-        $this->setConfig();
-        $user       = $this->getDataGenerator()->create_user($this->generateUser('jpeak5', 890775049,false));
-        $bad_user   = $this->getDataGenerator()->create_user($this->generateUser('asdf',   126575049,false));
+        setConfig();
+        $user       = $this->getDataGenerator()->create_user(generateUser('jpeak5', 890775049,false));
+        $bad_user   = $this->getDataGenerator()->create_user(generateUser('asdf',   126575049,false));
         
         $ret = mypic_update_picture($bad_user);
         $this->assertEquals(1, $ret, sprintf("update_picture should have failed for non-existant user, but returned %d for user with idnumber %d", $ret, $user->idnumber));
@@ -121,7 +121,7 @@ class lib_my_picture_testcase extends advanced_testcase{
     
     public function test_mypic_force_update_picture(){
         $this->resetAfterTest(true);
-        $this->setConfig();
+        setConfig();
         $update     = get_config('block_my_picture', 'update_url');
         $this->assertEquals($update, 'https://tt.lsu.edu/api/v2/jpg/kZabUZ6TZLcsYsCnV6KW/photos/lsuid/%s/update');
     }
@@ -169,51 +169,15 @@ class lib_my_picture_testcase extends advanced_testcase{
     }
     
 
-    public function generateUser($username=null, $id=null, $has_pic=false){
-        $users = array();
-        
-        $uname = $username ? $username : $this->genStr(7, false);
-        $idnum = $id ? $id : $this->genLsuId();
-        $user = array(
-            'username'  =>  $uname,
-            'idnumber'  =>  $idnum,
-            'picture'   =>  (int)$has_pic
-            );
-        
-        return $user;
-    }
+
     
-    private function genLsuId(){
-        return mt_rand(890000000, 899999999);
-    }
+
     
-    private function genStr($len=5, $num=false){
-        $alpha = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        $numer = "0123456789";
-        $alphanumeric = $alpha.$numer;
-        
-        $bound = $num ? strlen($alpha) + strlen($numer) : strlen($alpha);
-        $legal = $num ? $alpha.$numer : $alpha;
-        $str = "";
-        for($i=0; $i<$len; $i++){
-            $str .= $legal[mt_rand(0, $bound-1)];
-        }
-        return $str;
-    }
+
     
     
     
-    private function setConfig(){
-        
-        global $DB;
-        $this->resetAfterTest(true);
-        
-        set_config('ready_url', 'https://tt.lsu.edu/api/v2/json/kZabUZ6TZLcsYsCnV6KW/photos/recently_updated/%s', 'block_my_picture');
-        set_config('update_url', 'https://tt.lsu.edu/api/v2/jpg/kZabUZ6TZLcsYsCnV6KW/photos/lsuid/%s/update', 'block_my_picture');
-        set_config('webservice_url', 'https://tt.lsu.edu/api/v2/jpg/kZabUZ6TZLcsYsCnV6KW/photos/lsuid/%s?skip_place_holder=true', 'block_my_picture');
-        set_config('fetch', 1, 'block_my_picture');
-        set_config('cron_users', 10, 'block_my_picture');
-    }
+
 }
 
 
