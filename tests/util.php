@@ -1,9 +1,6 @@
 <?php
 
     function setConfig(){
-        
-        
-        
         set_config('ready_url', 'https://tt.lsu.edu/api/v2/json/kZabUZ6TZLcsYsCnV6KW/photos/recently_updated/%s', 'block_my_picture');
         set_config('update_url', 'https://tt.lsu.edu/api/v2/jpg/kZabUZ6TZLcsYsCnV6KW/photos/lsuid/%s/update', 'block_my_picture');
         set_config('webservice_url', 'https://tt.lsu.edu/api/v2/jpg/kZabUZ6TZLcsYsCnV6KW/photos/lsuid/%s?skip_place_holder=true', 'block_my_picture');
