@@ -17,9 +17,22 @@ class lib_my_picture_testcase extends advanced_testcase{
     
     protected function setUp(){
         setConfig();
+        
         $users_no_pix   =  getUsersWithoutPix();
         $users_wth_pix  = getUsersWithPix();
         $users_badids   = generateUsers(10, 0, true);
+        
+        $this->users_no_pix     = $this->populateDB($users_no_pix);
+        $this->$users_wth_pix   =$this-> populateDB($users_wth_pix);
+        $this->$users_badids    = $this->populateDB($users_badids);
+    }
+    
+    private function populateDB(array $users){
+        $db_users = array();    
+        foreach($users as $user){
+            $db_users[] = $this->getDataGenerator()->create_user($user);
+        }
+        return $db_users;
     }
     
     /**
@@ -32,21 +45,6 @@ class lib_my_picture_testcase extends advanced_testcase{
 
         global $DB;
         $this->resetAfterTest(true);
-        $DB->delete_records('user');
-        
-        //empty user table
-        $no_users = $DB->get_records('user');
-        $this->assertEquals(0, count($no_users));
-        
-        //create test users
-        foreach($usersSet as $user){
-            $this->getDataGenerator()->create_user($user);
-        }
-        
-        //verify that we created the correct number of test users
-        $test_users = $DB->get_records('user');
-        $this->assertEquals(count($usersSet), count($test_users));
-
         
         $expected = count($DB->get_records('user',array('picture' => 0)));
         $actual = mypic_get_users_without_pictures();
