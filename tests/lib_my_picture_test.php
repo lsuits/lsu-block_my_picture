@@ -11,6 +11,17 @@ require_once('util.php');
 class lib_my_picture_testcase extends advanced_testcase{
     
     
+    protected $users_no_pix;
+    protected $users_wth_pix;
+    protected $users_badids;
+    
+    protected function setUp(){
+        setConfig();
+        $users_no_pix   =  getUsersWithoutPix();
+        $users_wth_pix  = getUsersWithPix();
+        $users_badids   = generateUsers(10, 0, true);
+    }
+    
     /**
      * @testdox Lookup users without pictures
      * @dataProvider userProvider
@@ -52,8 +63,6 @@ class lib_my_picture_testcase extends advanced_testcase{
     public function testConfigUrlIsCorrect(){
         global $DB;
         $this->resetAfterTest(true);
-              
-        setConfig();
                 
         $ready      = get_config('block_my_picture', 'ready_url');
         $update     = get_config('block_my_picture', 'update_url');
@@ -72,7 +81,7 @@ class lib_my_picture_testcase extends advanced_testcase{
     public function test_mypic_get_users_updated_pictures($usersSet){
         $this->resetAfterTest(true);
         //set up block configs
-        setConfig();
+        ;
         
         $users = mypic_get_users_updated_pictures(time()-1000000);
         $this->assertNotEmpty($users, "No results from webservice, check the time() param");
@@ -84,7 +93,7 @@ class lib_my_picture_testcase extends advanced_testcase{
 //     * 
 //     */
 //    public function test_mypic_insert_picture(){
-//        setConfig();
+//        ;
 //        global $CFG;
 //        global $DB;
 //        $this->resetAfterTest(true);
@@ -106,7 +115,7 @@ class lib_my_picture_testcase extends advanced_testcase{
     
     public function test_mypic_update_picture(){
         $this->resetAfterTest(true);
-        setConfig();
+        ;
         $user       = $this->getDataGenerator()->create_user(generateUser('jpeak5', 890775049,false));
         $bad_user   = $this->getDataGenerator()->create_user(generateUser('asdf',   126575049,false));
         
@@ -121,7 +130,7 @@ class lib_my_picture_testcase extends advanced_testcase{
     
     public function test_mypic_force_update_picture(){
         $this->resetAfterTest(true);
-        setConfig();
+        ;
         $update     = get_config('block_my_picture', 'update_url');
         $this->assertEquals($update, 'https://tt.lsu.edu/api/v2/jpg/kZabUZ6TZLcsYsCnV6KW/photos/lsuid/%s/update');
     }
@@ -167,17 +176,6 @@ class lib_my_picture_testcase extends advanced_testcase{
         );
         return array($users);
     }
-    
-
-
-    
-
-    
-
-    
-    
-    
-
 }
 
 
