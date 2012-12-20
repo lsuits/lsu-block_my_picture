@@ -11,6 +11,11 @@ function mypic_get_users_without_pictures($limit=0) {
     return $DB->get_records('user', $params, '', '*', 0, $limit);
 }
 
+/**
+ * NB: Using the config 'ready_url', this corresponds to API docs for 'recently_updated'
+ * @param type $start_time
+ * @return type
+ */
 function mypic_get_users_updated_pictures($start_time) {
     $start_date = strftime("%Y%m%d%H", $start_time);
 
@@ -61,6 +66,12 @@ function mypic_insert_badid($userid) {
     return mypic_insert_picture($userid, $badid_path);
 }
 
+/**
+ * This method calls the webservice show() method, requests return as json
+ * @param type $idnumber
+ * @param type $hash
+ * @return boolean
+ */
 function mypic_force_update_picture($idnumber, $hash = null) {
     $url = get_config('block_my_picture', 'update_url');
 
@@ -78,12 +89,19 @@ function mypic_force_update_picture($idnumber, $hash = null) {
     $obj = json_decode($json);
 
     return (
-        isset($obj->photo) and
-        isset($obj->photo->success) and
-        !empty($obj->photo->success->status)
+        isset($obj->success) and
+        $obj->success->message == 'Photo update scheduled' and
+        $obj->success->status == 1
     );
 }
 
+/**
+ * This method calls webservice show() method requesting response as jpg
+ * @global type $CFG
+ * @param type $idnumber
+ * @param type $updating
+ * @return boolean|string
+ */
 function mypic_fetch_picture($idnumber, $updating = false) {
     global $CFG;
 
