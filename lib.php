@@ -13,8 +13,9 @@ function mypic_get_users_without_pictures($limit=0) {
 
 /**
  * NB: Using the config 'ready_url', this corresponds to API docs for 'recently_updated'
- * @param type $start_time
- * @return type
+ * @param type $start_time how far back to check for users marked as 'updated' 
+ * in the external system
+ * @return mixed array
  */
 function mypic_get_users_updated_pictures($start_time) {
     $start_date = strftime("%Y%m%d%H", $start_time);
@@ -68,8 +69,8 @@ function mypic_insert_badid($userid) {
 
 /**
  * This method calls the webservice show() method, requests return as json
- * @param type $idnumber
- * @param type $hash
+ * @param type $idnumber 89-number
+ * @param type $hash 
  * @return boolean
  */
 function mypic_force_update_picture($idnumber, $hash = null) {
@@ -98,8 +99,8 @@ function mypic_force_update_picture($idnumber, $hash = null) {
 /**
  * This method calls webservice show() method requesting response as jpg
  * @global type $CFG
- * @param type $idnumber
- * @param type $updating
+ * @param type $idnumber 89-number
+ * @param type $updating trigger the external service to mark the user photo as updated?
  * @return boolean|string
  */
 function mypic_fetch_picture($idnumber, $updating = false) {
