@@ -44,11 +44,13 @@ function mypic_insert_picture($userid, $picture_path) {
 
     $context = get_context_instance(CONTEXT_USER, $userid);
 
-    if (process_new_icon($context, 'user', 'icon', 0, $picture_path)) {
+    if(!file_exists($picture_path)){
+        return false;
+    }elseif(process_new_icon($context, 'user', 'icon', 0, $picture_path)) {
         return $DB->set_field('user', 'picture', 1, array('id' => $userid));
+    }else{
+        return false;
     }
-
-    return false;
 }
 
 function mypic_insert_nopic($userid) {
