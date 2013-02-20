@@ -6,9 +6,11 @@ require_once($CFG->libdir . '/filelib.php');
 function mypic_get_users_without_pictures($limit=0) {
     global $DB;
 
-    $params = array('picture' => 0, 'deleted' => 0);
-
-    return $DB->get_records('user', $params, '', '*', 0, $limit);
+    $params = array(0,0);
+    
+//    return $DB->get_records('user', $params, '', '*', 0, $limit);
+    $sql = "SELECT * FROM {user} u WHERE u.picture = ? AND u.deleted = ? ORDER BY RAND() LIMIT {$limit}";
+    return $DB->get_records_sql($sql, $params);
 }
 
 /**
@@ -44,15 +46,23 @@ function mypic_insert_picture($userid, $picture_path) {
 
     $context = get_context_instance(CONTEXT_USER, $userid);
     
+    $pathparts = explode('/', $picture_path);
+    $file = array_pop($pathparts);
+    $dir  = array_pop($pathparts);
+    $shortpath = $dir.'/'.$file;
+    
     if(!file_exists($picture_path)){
         mtrace(sprintf("File %s does not exist", $picture_path));
+        add_to_log(0, 'my_pic', "insert picture",'',sprintf("File %s does not exist for user %s", $shortpath, $userid));
         return false;
     }elseif(filesize($picture_path)<=1){
         mtrace(sprintf("File %s exists, but filesize is less than or equal to 1 byte", $picture_path));
+        add_to_log(0, 'my_pic', "insert picture",'',sprintf("1-byte file %s for user %s", $shortpath, $userid));
         return false;
     }elseif(process_new_icon($context, 'user', 'icon', 0, $picture_path)) {
         return $DB->set_field('user', 'picture', 1, array('id' => $userid));
     }else{
+        add_to_log(0, 'my_pic', "insert picture",'',sprintf("Unknown failure for file %s for user %s", $shortpath, $userid));
         return false;
     }
 }
@@ -149,6 +159,7 @@ function mypic_is_lsuid($idnumber) {
 // 3 - Picture not found, 'visit tiger card office' picture inserted
 function mypic_update_picture($user, $updating=false) {
     if (!mypic_is_lsuid($user->idnumber)) {
+        add_to_log(0, 'my_pic', "update picture",'',sprintf("bad id %s for user %s", $user->idnumber, $user->username));
         return (int) mypic_insert_badid($user->id);
     }
 
