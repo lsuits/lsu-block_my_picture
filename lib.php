@@ -8,7 +8,6 @@ function mypic_get_users_without_pictures($limit=0) {
 
     $params = array(0,0);
     
-//    return $DB->get_records('user', $params, '', '*', 0, $limit);
     $sql = "SELECT * FROM {user} u WHERE u.picture = ? AND u.deleted = ? ORDER BY RAND() LIMIT {$limit}";
     return $DB->get_records_sql($sql, $params);
 }
