@@ -43,8 +43,12 @@ function mypic_insert_picture($userid, $picture_path) {
     global $DB;
 
     $context = get_context_instance(CONTEXT_USER, $userid);
-
+    
     if(!file_exists($picture_path)){
+        mtrace(sprintf("File %s does not exist", $picture_path));
+        return false;
+    }elseif(filesize($picture_path)<=1){
+        mtrace(sprintf("File %s exists, but filesize is less than or equal to 1 byte", $picture_path));
         return false;
     }elseif(process_new_icon($context, 'user', 'icon', 0, $picture_path)) {
         return $DB->set_field('user', 'picture', 1, array('id' => $userid));
@@ -140,9 +144,9 @@ function mypic_is_lsuid($idnumber) {
 
 // Return values:
 // 0 - Error
-// 1 - Bad idnumber, contact moodle admin picture inserted
-// 2 - Success, tiger card picture inserted
-// 3 - Picture not found, visit tiger card office picture inserted
+// 1 - Bad idnumber, 'contact moodle admin' picture inserted
+// 2 - Success, tiger card office picture inserted
+// 3 - Picture not found, 'visit tiger card office' picture inserted
 function mypic_update_picture($user, $updating=false) {
     if (!mypic_is_lsuid($user->idnumber)) {
         return (int) mypic_insert_badid($user->id);
