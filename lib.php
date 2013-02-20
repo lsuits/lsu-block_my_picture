@@ -6,10 +6,8 @@ require_once($CFG->libdir . '/filelib.php');
 function mypic_get_users_without_pictures($limit=0) {
     global $DB;
 
-    $params = array(0,0);
-    
-    $sql = "SELECT * FROM {user} u WHERE u.picture = ? AND u.deleted = ? ORDER BY RAND() LIMIT {$limit}";
-    return $DB->get_records_sql($sql, $params);
+    $sql = "SELECT * FROM {user} u WHERE u.picture = 0 AND u.deleted = 0 ORDER BY RAND() LIMIT {$limit}";
+    return $DB->get_records_sql($sql);
 }
 
 /**
