@@ -6,9 +6,8 @@ require_once($CFG->libdir . '/filelib.php');
 function mypic_get_users_without_pictures($limit=0) {
     global $DB;
 
-    $params = array('picture' => 0, 'deleted' => 0);
-
-    return $DB->get_records('user', $params, '', '*', 0, $limit);
+    $sql = "SELECT * FROM {user} u WHERE u.picture = 0 AND u.deleted = 0 ORDER BY RAND() LIMIT {$limit}";
+    return $DB->get_records_sql($sql);
 }
 
 /**
@@ -43,12 +42,26 @@ function mypic_insert_picture($userid, $picture_path) {
     global $DB;
 
     $context = get_context_instance(CONTEXT_USER, $userid);
-
-    if (process_new_icon($context, 'user', 'icon', 0, $picture_path)) {
+    
+    $pathparts = explode('/', $picture_path);
+    $file = array_pop($pathparts);
+    $dir  = array_pop($pathparts);
+    $shortpath = $dir.'/'.$file;
+    
+    if(!file_exists($picture_path)){
+        mtrace(sprintf("File %s does not exist", $picture_path));
+        add_to_log(0, 'my_pic', "insert picture",'',sprintf("File %s does not exist for user %s", $shortpath, $userid));
+        return false;
+    }elseif(filesize($picture_path)<=1){
+        mtrace(sprintf("File %s exists, but filesize is less than or equal to 1 byte", $picture_path));
+        add_to_log(0, 'my_pic', "insert picture",'',sprintf("1-byte file %s for user %s", $shortpath, $userid));
+        return false;
+    }elseif(process_new_icon($context, 'user', 'icon', 0, $picture_path)) {
         return $DB->set_field('user', 'picture', 1, array('id' => $userid));
+    }else{
+        add_to_log(0, 'my_pic', "insert picture",'',sprintf("Unknown failure for file %s for user %s", $shortpath, $userid));
+        return false;
     }
-
-    return false;
 }
 
 function mypic_insert_nopic($userid) {
@@ -138,11 +151,17 @@ function mypic_is_lsuid($idnumber) {
 
 // Return values:
 // 0 - Error
-// 1 - Bad idnumber, contact moodle admin picture inserted
-// 2 - Success, tiger card picture inserted
-// 3 - Picture not found, visit tiger card office picture inserted
+// 1 - Bad idnumber, 'contact moodle admin' picture inserted
+// 2 - Success, tiger card office picture inserted
+// 3 - Picture not found, 'visit tiger card office' picture inserted
 function mypic_update_picture($user, $updating=false) {
+    
     if (!mypic_is_lsuid($user->idnumber)) {
+        $u  = isset($user->username) ? $user->username : '<not set>';
+        $id = isset($user->idnumber) ? $user->idnumber : '<not set>';
+        
+        add_to_log(0, 'my_pic', "update picture",'',sprintf("bad id %s for user %s", $id, $u));
+        
         return (int) mypic_insert_badid($user->id);
     }
 
