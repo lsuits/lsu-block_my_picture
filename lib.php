@@ -155,8 +155,13 @@ function mypic_is_lsuid($idnumber) {
 // 2 - Success, tiger card office picture inserted
 // 3 - Picture not found, 'visit tiger card office' picture inserted
 function mypic_update_picture($user, $updating=false) {
+    
     if (!mypic_is_lsuid($user->idnumber)) {
-        add_to_log(0, 'my_pic', "update picture",'',sprintf("bad id %s for user %s", $user->idnumber, $user->username));
+        $u  = isset($user->username) ? $user->username : '<not set>';
+        $id = isset($user->idnumber) ? $user->idnumber : '<not set>';
+        
+        add_to_log(0, 'my_pic', "update picture",'',sprintf("bad id %s for user %s", $id, $u));
+        
         return (int) mypic_insert_badid($user->id);
     }
 
