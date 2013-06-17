@@ -9,6 +9,19 @@ class block_my_picture extends block_list {
     function init() {
         $this->title = get_string('pluginname', 'block_my_picture');
     }
+    
+    function has_config(){
+        return true;
+    }
+    
+    public function applicable_formats() {
+        return array(
+            'site' => true,
+            'my' => true,
+            'site-index' => true,
+            'course-view' => true, 
+        );
+    }
 
     function get_content() {
         if ($this->content !== null) {
