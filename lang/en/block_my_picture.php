@@ -2,6 +2,9 @@
 
 // Author: Adam Zapletal
 
+$string['my_picture:addinstance'] = 'Add a new my picture block';
+$string['my_picture:myaddinstance'] = 'Add a new my picture block';
+
 // Strings for block content
 $string['pluginname'] = 'My Profile Picture';
 $string['reprocess'] = 'Reprocess';
