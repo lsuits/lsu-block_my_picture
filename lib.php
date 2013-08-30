@@ -3,11 +3,16 @@ global $CFG;
 require_once($CFG->libdir . '/gdlib.php');
 require_once($CFG->libdir . '/filelib.php');
 
+/**
+ * 
+ * @global stdClass $DB
+ * @param int $limit how many to fetch
+ * @return stdClass[]
+ */
 function mypic_get_users_without_pictures($limit=0) {
     global $DB;
-
-    $sql = "SELECT * FROM {user} u WHERE u.picture = 0 AND u.deleted = 0 ORDER BY RAND() LIMIT {$limit}";
-    return $DB->get_records_sql($sql);
+    return $DB->get_records('user',
+            array('picture'=>0, 'deleted'=>0), '', '*', 0, $limit);
 }
 
 /**
@@ -152,13 +157,13 @@ function mypic_is_lsuid($idnumber) {
 // 2 - Success, tiger card office picture inserted
 // 3 - Picture not found, 'visit tiger card office' picture inserted
 function mypic_update_picture($user, $updating=false) {
-    
+
     if (!mypic_is_lsuid($user->idnumber)) {
         $u  = isset($user->username) ? $user->username : '<not set>';
         $id = isset($user->idnumber) ? $user->idnumber : '<not set>';
-        
-        add_to_log(0, 'my_pic', "update picture",'',sprintf("bad id %s for user %s", $id, $u));
-        
+
+        add_to_log(0, 'my_pic', "update picture", '', sprintf("bad id %s for user %s", $id, $u));
+
         return (int) mypic_insert_badid($user->id);
     }
 
