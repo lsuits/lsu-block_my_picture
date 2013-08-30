@@ -1,5 +1,5 @@
 <?php
-
+global $CFG;
 require_once($CFG->libdir . '/gdlib.php');
 require_once($CFG->libdir . '/filelib.php');
 
@@ -119,30 +119,27 @@ function mypic_force_update_picture($idnumber, $hash = null) {
 function mypic_fetch_picture($idnumber, $updating = false) {
     global $CFG;
 
-    $hash = hash("sha256", $idnumber);
-
-    $filename = $idnumber . '.jpg';
-    $fullpath = $CFG->dataroot . '/temp/' . $filename;
-    $fp = fopen($fullpath, 'w');
-
-    $curl = new curl();
-
-    // Could not update photo
+    // Could not update photo.
     if ($updating and !mypic_force_update_picture($idnumber, $hash)) {
         return false;
     }
 
-    $url = sprintf(get_config('block_my_picture', 'webservice_url'), $hash);
-    $curl->download(array(array('url' => $url, 'file' => $fp)));
+    $hash = hash("sha256", $idnumber);
+    $name = $idnumber . '.jpg';
+    $path = $CFG->dataroot . '/temp/' . $name;
+    $url  = sprintf(get_config('block_my_picture', 'webservice_url'), $hash);
+    $curl = new curl();
+    $file = fopen($path, 'w');
 
-    fclose($fp);
+    $curl->download(array(array('url' => $url, 'file' => $file)));
+    fclose($file);
 
-    if (!filesize($fullpath)) {
-        unlink($fullpath);
+    if (!filesize($path)) {
+        unlink($path);
         return false;
     }
 
-    return $fullpath;
+    return $path;
 }
 
 function mypic_is_lsuid($idnumber) {
