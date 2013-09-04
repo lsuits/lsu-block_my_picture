@@ -62,15 +62,7 @@ class block_my_picture extends block_list {
             $limit = get_config('block_my_picture', 'cron_users');
             $users = mypic_get_users_without_pictures($limit);
         } else {
-            $params = array('name' => 'my_picture');
-
-            $cron = $DB->get_field('block', 'cron', $params);
-            $lastcron = $DB->get_field('block', 'lastcron', $params);
-
-            // Chosen time would either be cron time, or the last run time
-            $start_time = min(time() - $cron, $lastcron);
-
-            $users = mypic_get_users_updated_pictures($start_time);
+            $users = mypic_get_users_updated_pictures($this->tsStartTimeForRecentUpdates());
         }
 
         if (!$users) {
@@ -80,5 +72,15 @@ class block_my_picture extends block_list {
         }
 
         return true;
+    }
+
+    public function tsStartTimeForRecentUpdates(){
+        global $DB;
+        // Chosen time would either be cron time, or the last run time as GMT
+        $params     = array('name' => 'my_picture');
+        $cron       = $DB->get_field('block', 'cron', $params);
+        $lastcron   = $DB->get_field('block', 'lastcron', $params);
+
+        return strtotime(gmdate('MdYH',min(time() - $cron, $lastcron)));
     }
 }
