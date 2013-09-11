@@ -1,9 +1,10 @@
 <?php
 global $CFG;
 defined('MOODLE_INTERNAL') || die;
+require_once 'lib.php';
+$_s = function($key) { return get_string($key, 'block_my_picture'); };
 
 if ($ADMIN->fulltree) {
-    $_s = function($key) { return get_string($key, 'block_my_picture'); };
 
     $default_url = $CFG->wwwroot;
     $settings->add(new admin_setting_configtext('block_my_picture/webservice_url',
