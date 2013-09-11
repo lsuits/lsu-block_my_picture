@@ -124,9 +124,9 @@ function mypic_force_update_picture($idnumber, $hash = null) {
  */
 function mypic_fetch_picture($idnumber, $updating = false) {
     global $CFG;
-    
+
     $hash = hash("sha256", $idnumber);
-    
+
     if ($updating and !mypic_force_update_picture($idnumber, $hash)) {
         return false; // Could not update photo.
     }
