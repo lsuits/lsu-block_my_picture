@@ -48,18 +48,19 @@ function mypic_insert_picture($userid, $picture_path) {
 
     $context = get_context_instance(CONTEXT_USER, $userid);
     
-    $pathparts = explode('/', $picture_path);
-    $file = array_pop($pathparts);
-    $dir  = array_pop($pathparts);
-    $shortpath = $dir.'/'.$file;
+    $pathparts  = explode('/', $picture_path);
+    $file       = array_pop($pathparts);
+    $dir        = array_pop($pathparts);
+    $shortpath  = $dir.'/'.$file;
     
     if(!file_exists($picture_path)){
         mtrace(sprintf("File %s does not exist", $picture_path));
         add_to_log(0, 'my_pic', "insert picture",'',sprintf("File %s does not exist for user %s", $shortpath, $userid));
         return false;
-    }elseif(filesize($picture_path)<=1){
-        mtrace(sprintf("File %s exists, but filesize is less than or equal to 1 byte", $picture_path));
+    }elseif(filesize($picture_path) == 1){
+        mtrace(sprintf("File %s exists, but filesize is 1 byte and will be unlinked.", $picture_path));
         add_to_log(0, 'my_pic', "insert picture",'',sprintf("1-byte file %s for user %s", $shortpath, $userid));
+        unlink($picture_path);
         return false;
     }elseif(process_new_icon($context, 'user', 'icon', 0, $picture_path)) {
         return $DB->set_field('user', 'picture', 1, array('id' => $userid));
@@ -118,24 +119,23 @@ function mypic_force_update_picture($idnumber, $hash = null) {
  * This method calls webservice show() method requesting response as jpg
  * @global type $CFG
  * @param type $idnumber 89-number
- * @param type $updating trigger the external service to mark the user photo as updated?
+ * @param type $updating trigger the external service to mark the user photo as updated
  * @return boolean|string
  */
 function mypic_fetch_picture($idnumber, $updating = false) {
     global $CFG;
-
-    // Could not update photo.
+    
+    $hash = hash("sha256", $idnumber);
+    
     if ($updating and !mypic_force_update_picture($idnumber, $hash)) {
-        return false;
+        return false; // Could not update photo.
     }
 
-    $hash = hash("sha256", $idnumber);
     $name = $idnumber . '.jpg';
     $path = $CFG->dataroot . '/temp/' . $name;
     $url  = sprintf(get_config('block_my_picture', 'webservice_url'), $hash);
     $curl = new curl();
     $file = fopen($path, 'w');
-
     $curl->download(array(array('url' => $url, 'file' => $file)));
     fclose($file);
 
