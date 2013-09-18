@@ -1,5 +1,6 @@
 <?php
 global $CFG;
+
 require_once($CFG->libdir . '/gdlib.php');
 require_once($CFG->libdir . '/filelib.php');
 
@@ -22,6 +23,7 @@ function mypic_get_users_without_pictures($limit=0) {
  * @return mixed array
  */
 function mypic_get_users_updated_pictures($start_time) {
+
     $start_date = strftime("%Y%m%d%H", $start_time);
 
     $ready_url = get_config('block_my_picture', 'ready_url');
@@ -32,15 +34,25 @@ function mypic_get_users_updated_pictures($start_time) {
     $res = json_decode($json);
 
     $to_moodle = function($user) {
-        $user->firstname = $user->first_name;
-        $user->lastname = $user->last_name;
-        $user->idnumber = $user->id_number;
-
-        unset($user->first_name, $user->last_name, $user->id_number);
-        return $user;
+        return $user->id_number;
     };
 
-    return empty($res->users) ? array() : array_map($to_moodle, $res->users);
+    assert(isset($res->users)); //if the webservice changes, we want to know
+
+    $validUsers = mypic_WebserviceIntersectMoodle(array_map($to_moodle, $res->users));
+
+    return empty($res->users) ? array() : $validUsers;
+}
+
+/**
+ * 
+ * @global type $DB
+ * @param int[] $idnumbers array of idnumber keys to fetch users with
+ * @return stdClass[] user row objects from the DB
+ */
+function mypic_WebserviceIntersectMoodle($idnumbers = array()){
+    global $DB;
+    return array_values($DB->get_records_list('user', 'idnumber', $idnumbers, '','id, firstname, lastname, idnumber'));
 }
 
 function mypic_insert_picture($userid, $picture_path) {
