@@ -1,7 +1,7 @@
 <?php
 
 // Author: Adam Zapletal
-
+global $CFG;
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot . '/blocks/my_picture/lib.php');
 
