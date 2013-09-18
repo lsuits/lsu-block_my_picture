@@ -42,10 +42,6 @@ class mypic_webservices_testcase extends advanced_testcase {
         set_config('ready_url', $this->ws->ready_url(), 'block_my_picture');
         set_config('update_url', $this->ws->update_url(), 'block_my_picture');
         set_config('info_url', $this->ws->info_url(), 'block_my_picture');
-        
-        $this->knownMoodleUser = $this->getDataGenerator()->create_user(
-                $this->ws->getMoodleUserDetailsForKnownUser()
-                );
     }
     
     //helper function building WS URL for given user
@@ -70,15 +66,23 @@ class mypic_webservices_testcase extends advanced_testcase {
         $file = fopen($path, 'w');
         $curl->download(array(array('url' => $url, 'file' => $file)));
         fclose($file);
-        
+
         return $path;
     }
-    
+
+    protected function insertKnownUserIntoMoodle(){
+        return $this->knownMoodleUser = $this->getDataGenerator()->create_user(
+            $this->ws->getMoodleUserDetailsForKnownUser()
+            );
+    }
+
     /**
      * ensure that the webservice response matches known values
      * for a known user
      */
     public function testInfoUrlForKnownUser(){
+        $this->insertKnownUserIntoMoodle();
+
         $serviceUrl = $this->buildUrlByIdnumber(
                 $this->ws->info_url(),
                 $this->knownMoodleUser->idnumber
@@ -93,6 +97,8 @@ class mypic_webservices_testcase extends advanced_testcase {
 
     //ensure that image downloaded for a known user is identical to the test suite image
     public function testWebserviceUrlForKnownUser(){
+        $this->insertKnownUserIntoMoodle();
+
         $path = $this->downloadFfromWebserviceByIdnumber(
                 $this->ws->webservice_url(),
                 $this->knownMoodleUser->idnumber
