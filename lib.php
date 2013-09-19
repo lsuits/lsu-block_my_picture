@@ -66,11 +66,9 @@ function mypic_insert_picture($userid, $picture_path) {
     $shortpath  = $dir.'/'.$file;
     
     if(!file_exists($picture_path)){
-        mtrace(sprintf("File %s does not exist", $picture_path));
         add_to_log(0, 'my_pic', "insert picture",'',sprintf("File %s does not exist for user %s", $shortpath, $userid));
         return false;
     }elseif(filesize($picture_path) == 1){
-        mtrace(sprintf("File %s exists, but filesize is 1 byte and will be unlinked.", $picture_path));
         add_to_log(0, 'my_pic', "insert picture",'',sprintf("1-byte file %s for user %s", $shortpath, $userid));
         unlink($picture_path);
         return false;
