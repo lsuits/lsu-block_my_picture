@@ -13,6 +13,7 @@ interface photoWebservice {
     
     public function getMoodleUserDetailsForKnownUser();
     public function getWebserviceJsonDetailsForKnownUser();
+    public function getValidUserIds();
 }
 
 
@@ -90,7 +91,7 @@ class mypic_webservices_testcase extends advanced_testcase {
         
         $webserviceresponse = $this->fetchFromWebserviceByIdnumber($serviceUrl);
             $this->assertJsonStringEqualsJsonString(
-                json_encode($this->ws->getWebserviceJsonDetailsForKnownUser()), 
+                $this->ws->getWebserviceJsonDetailsForKnownUser(), 
                 $webserviceresponse
                 );
     }

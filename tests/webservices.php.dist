@@ -23,6 +23,10 @@ class ExampleWebService implements photoWebservice {
         return 'https://example.com/%s?skip_place_holder=true';
     }
     
+    /**
+     *
+     * @return array of attributes to be used in generating a Moodle user
+     */
     public function getMoodleUserDetailsForKnownUser(){
         return array(
             'username' => 'user1', 
@@ -32,9 +36,13 @@ class ExampleWebService implements photoWebservice {
             );
     }
     
-
+    /**
+     *
+     * @return string json expected to be returned from the Webservice
+     * for the known test user
+     */
     public function getWebserviceJsonDetailsForKnownUser(){
-        return array(
+        return json_encode(array(
             'first_name'        => 'joe',
             'middle_name'       => '',
             'last_name'         => 'student',
@@ -43,7 +51,15 @@ class ExampleWebService implements photoWebservice {
             'photo_content_type'=> 'image/jpeg',
             'photo_file_size'   => '321',
             'photo_updated_at'  => '2013-06-18T13:06:22-05:00',
-        );
+        ));
+    }
+
+    /**
+     *
+     * @return array of valid user IDs
+     */
+    public function getValidUserIds() {
+        return array(1,2,3,4,5,6,7,8,9);
     }
 }
 ?>
