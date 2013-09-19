@@ -14,6 +14,7 @@ interface photoWebservice {
     public function getMoodleUserDetailsForKnownUser();
     public function getWebserviceJsonDetailsForKnownUser();
     public function getValidUserIds();
+    public function getIdnumberWithoutPicture();
 }
 
 
@@ -72,9 +73,13 @@ class mypic_webservices_testcase extends advanced_testcase {
     }
 
     protected function insertKnownUserIntoMoodle(){
-        return $this->knownMoodleUser = $this->getDataGenerator()->create_user(
-            $this->ws->getMoodleUserDetailsForKnownUser()
+        return $this->knownMoodleUser = $this->generateUser(
+                $this->ws->getMoodleUserDetailsForKnownUser()
             );
+    }
+    
+    protected function generateUser($params = array()){
+        return $this->getDataGenerator()->create_user($params);
     }
 
     /**
@@ -109,7 +114,7 @@ class mypic_webservices_testcase extends advanced_testcase {
         $this->assertFileEquals('tests/mike.jpg', $path);
         $size = filesize($path);
         $this->assertGreaterThan(1, $size);
-    }    
+    }
 }
 
 ?>
