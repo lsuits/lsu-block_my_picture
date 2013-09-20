@@ -56,6 +56,12 @@ class block_my_picture extends block_list {
             return get_string($k, 'block_my_picture', $a);
         };
 
+        //quit if the webservice doesn't respond with json
+        if(!mypic_verifyWebserviceExists()){
+            mtrace(get_string("cron_webservice_err", "block_my_picture"));
+            return true;
+        }
+
         mtrace("\n" . $_s('start'));
 
         if (get_config('block_my_picture', 'fetch')) {
