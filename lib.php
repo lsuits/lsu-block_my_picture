@@ -148,7 +148,7 @@ function mypic_fetch_picture($idnumber, $updating = false) {
     $curl->download(array(array('url' => $url, 'file' => $file)));
     fclose($file);
 
-    if($curl->response['Status'] == '404'){
+    if(!empty($curl->response['Status']) and $curl->response['Status'] == '404'){
         unlink($path);
         return false;
     }
@@ -233,4 +233,51 @@ function mypic_batch_update($users, $updating=false, $sep='', $step=100) {
         'nopic'     => $num_nopic,
         'badid'     => $num_badid
         );
+}
+
+function mypic_verifyWebserviceExists(){
+    $ready = get_config('block_my_picture', 'ready_url');
+    $curl  = new curl();
+    $json  = $curl->get(sprintf($ready, time()));
+
+    if(is_null((json_decode($json)))){
+        mypic_emailAdminsFailureMsg();
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Simple email routine for messaging to admins
+ * @global type $CFG
+ * @global stdClass $DB
+ * @global type $USER
+ * @return int number of errors encountered while sending email
+ */
+function mypic_emailAdminsFailureMsg(){
+    global $CFG, $DB, $USER;
+    $subject = get_string('misconfigured_subject', 'block_my_picture');
+    $message = get_string('misconfigured_message', 'block_my_picture');
+
+    $adminIds     = explode(',',$CFG->siteadmins);
+    $admins = $DB->get_records_list('user', 'id',$adminIds);
+    $errors = 0;
+    foreach($admins as $admin){
+        $success = email_to_user(
+                $admin,                 // to
+                $USER,                  // from
+                $subject,               // subj
+                $message,               // body in plain text
+                $message,               // body in HTML
+                '',                     // attachment
+                '',                     // attachment name
+                true,                   // user true address ($USER)
+                $CFG->noreplyaddress,   // reply-to address
+                get_string('pluginname', 'block_my_picture') // reply-to name
+            );
+        if(!$success){
+            $errors++;
+        }
+    }
+    return $errors == 0 ? true : false;
 }
