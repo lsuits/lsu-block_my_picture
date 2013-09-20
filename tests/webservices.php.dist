@@ -63,7 +63,11 @@ class ExampleWebService implements photoWebservice {
     }
 
     public function getIdnumberWithoutPicture() {
-        
+        return 'idnumberThatDoesNotHaveAPicture';
+    }
+    
+    public function getFakeId() {
+        return 'id#'.rand(0,9999);
     }
 }
 ?>

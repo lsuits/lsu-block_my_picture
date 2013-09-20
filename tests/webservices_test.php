@@ -15,6 +15,7 @@ interface photoWebservice {
     public function getWebserviceJsonDetailsForKnownUser();
     public function getValidUserIds();
     public function getIdnumberWithoutPicture();
+    public function getFakeId();
 }
 
 
@@ -72,7 +73,7 @@ class mypic_webservices_testcase extends advanced_testcase {
         return $path;
     }
 
-    protected function insertKnownUserIntoMoodle(){
+    protected function getValidUser(){
         return $this->knownMoodleUser = $this->generateUser(
                 $this->ws->getMoodleUserDetailsForKnownUser()
             );
@@ -81,13 +82,33 @@ class mypic_webservices_testcase extends advanced_testcase {
     protected function generateUser($params = array()){
         return $this->getDataGenerator()->create_user($params);
     }
+    
+    protected function getDbPicStatusForUser($user){
+        global $DB;
+        return $DB->get_field('user', 'picture', array('id'=>$user->id));
+    }
+    
+    protected function getNoPicUser(){
+        return $this->generateUser(array(
+            'idnumber'  => $this->ws->getIdnumberWithoutPicture(),
+            'picture'   => 0
+        ));
+    }
+    
+    protected function getBadIdUser(){
+        return $this->generateUser(
+                array(
+                    'idnumber' => $this->ws->getFakeId(),
+                    'picture'  => 0,
+                ));
+    }
 
     /**
      * ensure that the webservice response matches known values
      * for a known user
      */
     public function testInfoUrlForKnownUser(){
-        $this->insertKnownUserIntoMoodle();
+        $this->getValidUser();
 
         $serviceUrl = $this->buildUrlByIdnumber(
                 $this->ws->info_url(),
@@ -103,7 +124,7 @@ class mypic_webservices_testcase extends advanced_testcase {
 
     //ensure that image downloaded for a known user is identical to the test suite image
     public function testWebserviceUrlForKnownUser(){
-        $this->insertKnownUserIntoMoodle();
+        $this->getValidUser();
 
         $path = $this->downloadFfromWebserviceByIdnumber(
                 $this->ws->webservice_url(),
