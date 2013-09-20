@@ -54,7 +54,7 @@ class mypic_webservices_testcase extends advanced_testcase {
     }
 
     //makes a WS request using the param $url
-    public function fetchFromWebserviceByIdnumber($url){
+    public function fetchFromWebservice($url){
         $curl = new curl();
         return $curl->get($url);
     }
@@ -115,7 +115,7 @@ class mypic_webservices_testcase extends advanced_testcase {
                 $this->knownMoodleUser->idnumber
                 );
         
-        $webserviceresponse = $this->fetchFromWebserviceByIdnumber($serviceUrl);
+        $webserviceresponse = $this->fetchFromWebservice($serviceUrl);
             $this->assertJsonStringEqualsJsonString(
                 $this->ws->getWebserviceJsonDetailsForKnownUser(), 
                 $webserviceresponse
@@ -127,14 +127,19 @@ class mypic_webservices_testcase extends advanced_testcase {
         $this->getValidUser();
 
         $path = $this->downloadFfromWebserviceByIdnumber(
-                $this->ws->webservice_url(),
-                $this->knownMoodleUser->idnumber
+                    $this->ws->webservice_url(),
+                    $this->knownMoodleUser->idnumber
                 );
         $this->assertInternalType('string',$path);
         $this->assertFileExists($path, sprintf("Couldn't find file %s", $path));
         $this->assertFileEquals('tests/mike.jpg', $path);
         $size = filesize($path);
         $this->assertGreaterThan(1, $size);
+    }
+    
+    public function test_mypic_get_users_updated_pictures(){
+        $this->assertNotEmpty($this->fetchFromWebservice(sprintf($this->ws->ready_url(), time())));
+        $this->assertNotEmpty($this->fetchFromWebservice(sprintf($this->ws->ready_url(), time()-30*86400)));
     }
 }
 

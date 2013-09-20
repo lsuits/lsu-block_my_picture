@@ -37,8 +37,6 @@ function mypic_get_users_updated_pictures($start_time) {
         return $user->id_number;
     };
 
-    assert(isset($res->users)); //if the webservice changes, we want to know
-
     $validUsers = mypic_WebserviceIntersectMoodle(array_map($to_moodle, $res->users));
 
     return empty($res->users) ? array() : $validUsers;
