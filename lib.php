@@ -149,7 +149,7 @@ function mypic_fetch_picture($idnumber, $updating = false) {
     $curl->download(array(array('url' => $url, 'file' => $file)));
     fclose($file);
 
-    if (!filesize($path)) {
+    if($curl->response['Status'] == '404'){
         unlink($path);
         return false;
     }
