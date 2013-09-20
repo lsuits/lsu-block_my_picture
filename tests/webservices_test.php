@@ -104,6 +104,31 @@ class mypic_webservices_testcase extends advanced_testcase {
     }
 
     /**
+     * call the verify fn with all webservice URLs configured properly.
+     * Then, reset all URLs to the default (wwwroot) 
+     * @global type $CFG
+     * @global type $DB
+     */
+    public function test_mypic_verifyWebserviceExists(){
+        global $CFG, $DB, $USER;
+        $this->assertTrue(mypic_verifyWebserviceExists());
+        //reset to defaults
+        set_config('webservice_url', $CFG->wwwroot, 'block_my_picture');
+        set_config('ready_url', $CFG->wwwroot, 'block_my_picture');
+        set_config('update_url', $CFG->wwwroot, 'block_my_picture');
+        set_config('info_url', $CFG->wwwroot, 'block_my_picture');
+
+        //ensure admin has an email address
+        $admin = $DB->get_record('user', array('username'=>'admin'));
+        $admin->email = 'admin@example.com';
+        $USER->maildisplay = $admin->maildisplay = 2;
+        $USER->email = "USER@example.com";
+
+        $DB->update_record('user', $admin);
+        $this->assertFalse(mypic_verifyWebserviceExists());
+    }
+
+    /**
      * ensure that the webservice response matches known values
      * for a known user
      */
@@ -111,7 +136,7 @@ class mypic_webservices_testcase extends advanced_testcase {
         $this->getValidUser();
 
         $serviceUrl = $this->buildUrlByIdnumber(
-                $this->ws->info_url(),
+                get_config('block_my_picture','info_url'),
                 $this->knownMoodleUser->idnumber
                 );
         
@@ -127,7 +152,7 @@ class mypic_webservices_testcase extends advanced_testcase {
         $this->getValidUser();
 
         $path = $this->downloadFfromWebserviceByIdnumber(
-                    $this->ws->webservice_url(),
+                    get_config('block_my_picture','webservice_url'),
                     $this->knownMoodleUser->idnumber
                 );
         $this->assertInternalType('string',$path);
@@ -138,8 +163,8 @@ class mypic_webservices_testcase extends advanced_testcase {
     }
     
     public function test_mypic_get_users_updated_pictures(){
-        $this->assertNotEmpty($this->fetchFromWebservice(sprintf($this->ws->ready_url(), time())));
-        $this->assertNotEmpty($this->fetchFromWebservice(sprintf($this->ws->ready_url(), time()-30*86400)));
+        $this->assertNotEmpty($this->fetchFromWebservice(sprintf(get_config('block_my_picture','ready_url'), time())));
+        $this->assertNotEmpty($this->fetchFromWebservice(sprintf(get_config('block_my_picture','ready_url'), time()-30*86400)));
     }
 }
 
