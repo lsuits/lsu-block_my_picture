@@ -45,7 +45,7 @@ function mypic_get_users_updated_pictures($start_time) {
 }
 
 /**
- * 
+ * For a given array of idnumbers, return only the subset that are valid in the database
  * @global type $DB
  * @param int[] $idnumbers array of idnumber keys to fetch users with
  * @return stdClass[] user row objects from the DB
@@ -69,6 +69,7 @@ function mypic_insert_picture($userid, $picture_path) {
         add_to_log(0, 'my_pic', "insert picture",'',sprintf("File %s does not exist for user %s", $shortpath, $userid));
         return false;
     }elseif(filesize($picture_path) == 1){
+        //this should never get called, now that the fetch() method traps for this condition
         add_to_log(0, 'my_pic', "insert picture",'',sprintf("1-byte file %s for user %s", $shortpath, $userid));
         unlink($picture_path);
         return false;
@@ -227,4 +228,11 @@ function mypic_batch_update($users, $updating=false, $sep='', $step=100) {
     }
 
     mtrace($_s('elapsed', $time_diff) . $sep);
+    return array(
+        'count'     => $count,
+        'success'   => $num_success,
+        'error'     => $num_error,
+        'nopic'     => $num_nopic,
+        'badid'     => $num_badid
+        );
 }
