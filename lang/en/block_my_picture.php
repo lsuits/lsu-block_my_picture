@@ -19,6 +19,9 @@ $string['num_nopic'] = 'Missing pictures';
 $string['num_badid'] = 'Invalid idnumbers';
 $string['num_error'] = 'Errors';
 $string['elapsed'] = 'Elapsed time: {$a} seconds';
+$string['misconfigured_message'] = "The My Profile Picture block failed to contact the photos webservice. Please check the settings and verify the webservice is operating normally";
+$string['misconfigured_subject'] = "MyProfilePicture ERROR";
+$string["cron_webservice_err"]   = "\n!! Webservice communication error.\nIt is possible that the URLs are misconfigured in the Admin settings area.";
 
 // Strings for reprocess.php
 $string['reprocess_title'] = 'Reprocess My Picture';
