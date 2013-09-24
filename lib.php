@@ -149,6 +149,7 @@ function mypic_fetch_picture($idnumber, $updating = false) {
     fclose($file);
 
     if(!empty($curl->response['Status']) and $curl->response['Status'] == '404'){
+        add_to_log(0, 'my_pic', "insert picture",'',sprintf("404 for user %s", $idnumber));
         unlink($path);
         return false;
     }
