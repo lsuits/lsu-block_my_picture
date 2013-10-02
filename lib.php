@@ -12,8 +12,8 @@ require_once($CFG->libdir . '/filelib.php');
  */
 function mypic_get_users_without_pictures($limit=0) {
     global $DB;
-    return $DB->get_records('user',
-            array('picture'=>0, 'deleted'=>0), '', '*', 0, $limit);
+    $select = "picture <> 1 AND deleted = 0 ORDER BY RAND() LIMIT " . $limit;
+    return $DB->get_records_select('user', $select);
 }
 
 /**
@@ -54,7 +54,7 @@ function mypic_WebserviceIntersectMoodle($idnumbers = array()){
 }
 
 function mypic_insert_picture($userid, $picture_path) {
-    global $DB;
+    global $DB, $CFG;
 
     $context = get_context_instance(CONTEXT_USER, $userid);
     
@@ -66,11 +66,10 @@ function mypic_insert_picture($userid, $picture_path) {
     if(!file_exists($picture_path)){
         add_to_log(0, 'my_pic', "insert picture",'',sprintf("File %s does not exist for user %s", $shortpath, $userid));
         return false;
-    }elseif(filesize($picture_path) == 1){
-        //this should never get called, now that the fetch() method traps for this condition
+    }elseif($picture_path == $CFG->dirroot . '/blocks/my_picture/images/nopic.png'){
         add_to_log(0, 'my_pic', "insert picture",'',sprintf("1-byte file %s for user %s", $shortpath, $userid));
-        unlink($picture_path);
-        return false;
+        process_new_icon($context, 'user', 'icon', 0, $picture_path);
+        return $DB->set_field('user', 'picture', 2, array('id' => $userid));
     }elseif(process_new_icon($context, 'user', 'icon', 0, $picture_path)) {
         return $DB->set_field('user', 'picture', 1, array('id' => $userid));
     }else{
@@ -182,6 +181,7 @@ function mypic_update_picture($user, $updating=false) {
     }
 
     return (int) mypic_insert_nopic($user->id) * 3;
+    return 0;
 }
 
 function mypic_batch_update($users, $updating=false, $sep='', $step=100) {
@@ -194,7 +194,7 @@ function mypic_batch_update($users, $updating=false, $sep='', $step=100) {
     $count = $num_success = $num_error = $num_nopic = $num_badid = 0;
 
     foreach ($users as $user) {
-        mtrace('Processing image for (' . $user->idnumber . ') ' . $sep);
+        mtrace('Processing image for (' . $user->idnumber . ') ');
 
         // Keys are error codes, values are counter variables to increment
         $result_map = array(
@@ -204,7 +204,11 @@ function mypic_batch_update($users, $updating=false, $sep='', $step=100) {
             3 => 'num_nopic'
         );
 
-        $$result_map[mypic_update_picture($user, $updating)]++;
+        $mypicreturncode = mypic_update_picture($user, $updating);
+
+        mtrace($result_map[$mypicreturncode] . $sep);
+
+        $$result_map[$mypicreturncode]++;
 
         $count++;
 
