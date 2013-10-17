@@ -12,7 +12,7 @@ require_once($CFG->libdir . '/filelib.php');
  */
 function mypic_get_users_without_pictures($limit=0) {
     global $DB;
-    $select = "picture <> 1 AND deleted = 0 ORDER BY RAND() LIMIT " . $limit;
+    $select = "picture <> 1 AND deleted = 0 AND suspended = 0 ORDER BY RAND() LIMIT " . $limit;
     return $DB->get_records_select('user', $select);
 }
 
