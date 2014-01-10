@@ -1,5 +1,6 @@
 <?php
-require_once 'tests/webservices_test.php';
+global $CFG;
+require_once $CFG->dirroot.'/blocks/my_picture/tests/webservices_test.php';
 require_once dirname(dirname(__FILE__)).'/lib.php';
 
 class lib_test extends mypic_webservices_testcase {
@@ -138,6 +139,13 @@ class lib_test extends mypic_webservices_testcase {
         $this->assertEquals(1, $result['nopic']);
         $this->assertEquals(1, $result['success']);
         
+    }
+    
+    /**
+     * @expectedException     coding_exception
+     */
+    public function test_mypic_verifyWebserviceExists(){
+        mypic_force_update_picture(123);
     }
     
 }

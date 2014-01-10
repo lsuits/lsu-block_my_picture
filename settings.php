@@ -13,8 +13,8 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('block_my_picture/ready_url',
         $_s('ready_url'), $_s('url'), $default_url));
 
-    $settings->add(new admin_setting_configtext('block_my_picture/update_url',
-        $_s('update_url'), $_s('url'), $default_url));
+//    $settings->add(new admin_setting_configtext('block_my_picture/update_url',
+//        $_s('update_url'), $_s('url'), $default_url));
 
     $settings->add(new admin_setting_configcheckbox('block_my_picture/fetch',
         $_s('fetch'), $_s('fetch_desc'), 1));

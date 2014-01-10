@@ -99,9 +99,12 @@ function mypic_insert_badid($userid) {
  * This method calls the webservice show() method, requests return as json
  * @param type $idnumber 89-number
  * @param type $hash 
+ * @deprecated no longer need update functionality
  * @return boolean
  */
 function mypic_force_update_picture($idnumber, $hash = null) {
+    throw new coding_exception("There is no longer any need to 'update' photos; please do not call this function");
+    
     $url = get_config('block_my_picture', 'update_url');
 
     if (empty($url)) {
@@ -135,11 +138,6 @@ function mypic_fetch_picture($idnumber, $updating = false) {
     global $CFG;
 
     $hash = hash("sha256", $idnumber);
-
-    if ($updating and !mypic_force_update_picture($idnumber, $hash)) {
-        return false; // Could not update photo.
-    }
-
     $name = $idnumber . '.jpg';
     $path = $CFG->dataroot . '/temp/' . $name;
     $url  = sprintf(get_config('block_my_picture', 'webservice_url'), $hash);
@@ -150,6 +148,7 @@ function mypic_fetch_picture($idnumber, $updating = false) {
 
     if(!empty($curl->response['Status']) and $curl->response['Status'] == '404'){
         add_to_log(0, 'my_pic', "insert picture",'',sprintf("404 for user %s", $idnumber));
+        mtrace(sprintf("404 for user %s", $idnumber));
         unlink($path);
         return false;
     }
@@ -239,10 +238,10 @@ function mypic_batch_update($users, $updating=false, $sep='', $step=100) {
 function mypic_verifyWebserviceExists(){
     $ready = get_config('block_my_picture', 'ready_url');
     $curl  = new curl();
-    $json  = $curl->get(sprintf($ready, time()));
+    $json  = $curl->get(sprintf($ready));
 
     if(is_null((json_decode($json)))){
-        mypic_emailAdminsFailureMsg();
+        mypic_emailAdminsFailureMsg($ready);
         return false;
     }
     return true;
@@ -255,10 +254,13 @@ function mypic_verifyWebserviceExists(){
  * @global type $USER
  * @return int number of errors encountered while sending email
  */
-function mypic_emailAdminsFailureMsg(){
+function mypic_emailAdminsFailureMsg($address='<none given>'){
     global $CFG, $DB, $USER;
+    
     $subject = get_string('misconfigured_subject', 'block_my_picture');
-    $message = get_string('misconfigured_message', 'block_my_picture');
+    $message = get_string('misconfigured_message', 'block_my_picture', $address);
+    
+    mtrace(sprintf('addr arg = %s, message = %s', $address, $message));
 
     $adminIds     = explode(',',$CFG->siteadmins);
     $admins = $DB->get_records_list('user', 'id',$adminIds);
