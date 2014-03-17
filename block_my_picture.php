@@ -72,7 +72,7 @@ class block_my_picture extends block_list {
         }
 
         if (!$users) {
-            echo $_s('no_missing_pictures') . '<br />';
+            mtrace($_s('no_missing_pictures'));
         } else {
             mypic_batch_update($users);
         }
