@@ -141,10 +141,11 @@ class mypic_webservices_testcase extends advanced_testcase {
                 );
         
         $webserviceresponse = $this->fetchFromWebservice($serviceUrl);
-            $this->assertJsonStringEqualsJsonString(
-                $this->ws->getWebserviceJsonDetailsForKnownUser(), 
-                $webserviceresponse
-                );
+        
+        $this->assertJsonStringEqualsJsonString(
+            $this->ws->getWebserviceJsonDetailsForKnownUser(), 
+            $webserviceresponse
+            );
     }
 
     //ensure that image downloaded for a known user is identical to the test suite image
