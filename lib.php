@@ -68,14 +68,22 @@ function mypic_insert_picture($userid, $picture_path) {
         return false;
     }elseif($picture_path == $CFG->dirroot . '/blocks/my_picture/images/nopic.png'){
         add_to_log(0, 'my_pic', "insert picture",'',sprintf("1-byte file %s for user %s", $shortpath, $userid));
-        process_new_icon($context, 'user', 'icon', 0, $picture_path);
-        return $DB->set_field('user', 'picture', 2, array('id' => $userid));
-    }elseif(process_new_icon($context, 'user', 'icon', 0, $picture_path)) {
-        return $DB->set_field('user', 'picture', 1, array('id' => $userid));
+        try{
+            process_new_icon($context, 'user', 'icon', 0, $picture_path);
+            return $DB->set_field('user', 'picture', 2, array('id' => $userid));
+        }catch(Exception $e){
+            add_to_log(0, 'my_pic', "insert picture",'',sprintf("Exception '%s' caught while trying to insert nopic.jpg for user %s", $e->message, $userid));
+        }
     }else{
-        add_to_log(0, 'my_pic', "insert picture",'',sprintf("Unknown failure for file %s for user %s", $shortpath, $userid));
-        return false;
+        try{
+            process_new_icon($context, 'user', 'icon', 0, $picture_path);
+            return $DB->set_field('user', 'picture', 1, array('id' => $userid));
+        }catch(Exception $e){
+            add_to_log(0, 'my_pic', "insert picture",'',sprintf("Exception '%s' caught while trying to insert picture for user %s", $e->message, $userid));
+        }
     }
+//        add_to_log(0, 'my_pic', "insert picture",'',sprintf("Unknown failure for file %s for user %s", $shortpath, $userid));
+//        return false;
 }
 
 function mypic_insert_nopic($userid) {
