@@ -17,7 +17,7 @@ if (!is_siteadmin($USER->id)) {
 $header = $_s('fetch_missing_title');
 $pluginname = $_s('pluginname');
 
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 $PAGE->set_url('/blocks/my_picture/fetch_missing.php');
 $PAGE->navbar->add($header);
 $PAGE->set_title($pluginname . ': ' . $header);

@@ -18,7 +18,7 @@ if (!is_siteadmin($USER->id)) {
 $header = $_s('reprocess_all_title');
 $pluginname = $_s('pluginname');
 
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 $PAGE->set_url('/blocks/my_picture/reprocess_all.php');
 $PAGE->navbar->add($header);
 $PAGE->set_title($pluginname . ': ' . $header);

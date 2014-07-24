@@ -12,7 +12,7 @@ $_s = function($key) { return get_string($key, 'block_my_picture'); };
 $header = $_s('reprocess_title');
 $pluginname = $_s('pluginname');
 
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 $PAGE->set_url('/blocks/my_picture/reprocess.php');
 $PAGE->navbar->add($pluginname);
 $PAGE->navbar->add($header);

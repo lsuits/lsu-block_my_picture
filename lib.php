@@ -56,7 +56,7 @@ function mypic_WebserviceIntersectMoodle($idnumbers = array()){
 function mypic_insert_picture($userid, $picture_path) {
     global $DB, $CFG;
 
-    $context = get_context_instance(CONTEXT_USER, $userid);
+    $context = context_user::instance($userid);
     
     $pathparts  = explode('/', $picture_path);
     $file       = array_pop($pathparts);
@@ -64,24 +64,29 @@ function mypic_insert_picture($userid, $picture_path) {
     $shortpath  = $dir.'/'.$file;
     
     if(!file_exists($picture_path)){
-        add_to_log(0, 'my_pic', "insert picture",'',sprintf("File %s does not exist for user %s", $shortpath, $userid));
+//        Removed until we migrate to the new events system.
+//        add_to_log(0, 'my_pic', "insert picture",'',sprintf("File %s does not exist for user %s", $shortpath, $userid));
         return false;
     }elseif($picture_path == $CFG->dirroot . '/blocks/my_picture/images/nopic.png'){
-        add_to_log(0, 'my_pic', "insert picture",'',sprintf("1-byte file %s for user %s", $shortpath, $userid));
+//        Removed until we migrate to the new events system.
+//        add_to_log(0, 'my_pic', "insert picture",'',sprintf("1-byte file %s for user %s", $shortpath, $userid));
         try{
             process_new_icon($context, 'user', 'icon', 0, $picture_path);
             return $DB->set_field('user', 'picture', 2, array('id' => $userid));
         }catch(Exception $e){
-            add_to_log(0, 'my_pic', "insert picture",'',sprintf("Exception '%s' caught while trying to insert nopic.jpg for user %s", $e->message, $userid));
+//            Removed until we migrate to the new events system.
+//            add_to_log(0, 'my_pic', "insert picture",'',sprintf("Exception '%s' caught while trying to insert nopic.jpg for user %s", $e->message, $userid));
         }
     }else{
         try{
             process_new_icon($context, 'user', 'icon', 0, $picture_path);
             return $DB->set_field('user', 'picture', 1, array('id' => $userid));
         }catch(Exception $e){
-            add_to_log(0, 'my_pic', "insert picture",'',sprintf("Exception '%s' caught while trying to insert picture for user %s", $e->message, $userid));
+//            Removed until we migrate to the new events system.
+//            add_to_log(0, 'my_pic', "insert picture",'',sprintf("Exception '%s' caught while trying to insert picture for user %s", $e->message, $userid));
         }
     }
+//        Removed by Jason Peak at some earlier time.
 //        add_to_log(0, 'my_pic', "insert picture",'',sprintf("Unknown failure for file %s for user %s", $shortpath, $userid));
 //        return false;
 }
@@ -154,7 +159,8 @@ function mypic_fetch_picture($idnumber, $updating = false) {
     fclose($file);
 
     if(!empty($curl->response['Status']) and $curl->response['Status'] == '404'){
-        add_to_log(0, 'my_pic', "insert picture",'',sprintf("404 for user %s", $idnumber));
+//        Removed until we migrate to the new events system.
+//        add_to_log(0, 'my_pic', "insert picture",'',sprintf("404 for user %s", $idnumber));
         mtrace(sprintf("404 for user %s", $idnumber));
         unlink($path);
         return false;
@@ -178,7 +184,8 @@ function mypic_update_picture($user, $updating=false) {
         $u  = isset($user->username) ? $user->username : '<not set>';
         $id = isset($user->idnumber) ? $user->idnumber : '<not set>';
 
-        add_to_log(0, 'my_pic', "update picture", '', sprintf("bad id %s for user %s", $id, $u));
+//        Removed until we migrate to the new events system.
+//        add_to_log(0, 'my_pic', "update picture", '', sprintf("bad id %s for user %s", $id, $u));
 
         return (int) mypic_insert_badid($user->id);
     }
