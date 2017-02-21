@@ -28,7 +28,7 @@ $string['reprocess_title'] = 'Reprocess My Picture';
 $string['badid_user'] = 'Please contact elearning@lsu.edu to have your idnumber corrected in Moodle';
 $string['nopic_user'] = 'Please visit the Tiger Card Office to update your Moodle picture';
 $string['error_user'] = 'An error has occurred';
-$string['success_user'] = 'Your profile picture was successfully updated';
+$string['success_user'] = 'Your profile picture was successfully updated. Please log out and log back in to see the updated image.';
 
 // Strings for fetch_missing.php and reprocess_all.php
 $string['reprocess_all_title'] = 'Reprocess All Profile Pictures';
@@ -59,9 +59,9 @@ Reprocess Your Profile Picture
 
 Pressing Reprocess under the My Profile Picture block requests your latest photo from the Tiger Card office.
 
-You can update your Tiger Card photo by going to <a href="https://photos.tigercard.lsu.edu">https://photos.tigercard.lsu.edu</a> and submitting your own photo that adhere\'s to the Tiger Card Photo Requirements listed below
+You can update your Tiger Card photo by going to <a href="https://tcard.lsu.edu">https://tcard.lsu.edu</a> and submitting your own photo that adhere\'s to the Tiger Card Photo Requirements listed below
 
-1. Open a browser and go to the photos area of the Tiger Card Website: <a href="https://photos.tigercard.lsu.edu">https://photos.tigercard.lsu.edu</a>
+1. Open a browser and go to the photos area of the Tiger Card Website: <a href="https://tcard.lsu.edu">https://tcard.lsu.edu</a>
 
 2. Here you will enter your PAWS ID and Password to login.
 
@@ -79,5 +79,5 @@ You can update your Tiger Card photo by going to <a href="https://photos.tigerca
 
 9. Click on the Reprocess link in this block and this will replace the former picture with your new picture.
 
-10. To see your image, clear your browser\'s cache and refresh the Moodle page.
+10. To see your image, clear your browser\'s cache, log out and back in, and refresh the Moodle page.
 ';
