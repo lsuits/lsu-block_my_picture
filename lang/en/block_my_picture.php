@@ -28,7 +28,7 @@ $string['reprocess_title'] = 'Reprocess My Picture';
 $string['badid_user'] = 'Please contact elearning@lsu.edu to have your idnumber corrected in Moodle';
 $string['nopic_user'] = 'Please visit the Tiger Card Office to update your Moodle picture';
 $string['error_user'] = 'An error has occurred';
-$string['success_user'] = 'Your profile picture was successfully updated. Please log out and log back in to see the updated image.';
+$string['success_user'] = 'Your profile picture was successfully updated. Please log out, log back in, and refresh the dashboard to see the updated image.';
 
 // Strings for fetch_missing.php and reprocess_all.php
 $string['reprocess_all_title'] = 'Reprocess All Profile Pictures';
