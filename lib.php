@@ -163,7 +163,7 @@ function mypic_fetch_picture($idnumber, $updating = false) {
     fclose($file);
 
     if($responseCode == '200 OK' && $contentType == 'image/jpeg'){
-        echo'<p style="text-align: center;"><img src = "' . $url . '" alt="photo" style="border: 1px solid #666666; margin: 0 auto; border-radius: 10px;" width="auto" height="100px" /></p>';
+        echo'<p style="text-align: center;"><img src="data:image/jpeg;base64,'. base64_encode(file_get_contents($url)) . '" alt="photo" style="border: 1px solid #666666; margin: 0 auto; border-radius: 10px;" width="auto" height="100px" /></p>';
         return $path;
     } else if ($responseCode != '404 Not Found') {
         echo(get_string('cron_webservice_err', 'block_my_picture')); 
