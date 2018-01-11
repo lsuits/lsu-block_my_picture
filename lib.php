@@ -1,4 +1,28 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Connects to LSU web service for downloading and updating user photos
+ *
+ * @package    block_my_picture
+ * @copyright  2008, Adam Zapletal, 2017, Robert Russo, Louisiana State University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// Set and get the config variable
 global $CFG;
 
 require_once($CFG->libdir . '/gdlib.php');
@@ -16,12 +40,14 @@ function mypic_get_users_without_pictures($limit=0) {
     return $DB->get_records_select('user', $select);
 }
 
+
 /**
  * NB: Using the config 'ready_url', this corresponds to API docs for 'recently_updated'
  * @param type $start_time how far back to check for users marked as 'updated' 
  * in the external system
  * @return mixed array
  */
+/*
 function mypic_get_users_updated_pictures($start_time) {
 
     $start_date = strftime("%Y%m%d%H", $start_time);
@@ -41,6 +67,7 @@ function mypic_get_users_updated_pictures($start_time) {
 
     return empty($res->users) ? array() : $validUsers;
 }
+*/
 
 /**
  * For a given array of idnumbers, return only the subset that are valid in the database
@@ -53,6 +80,12 @@ function mypic_WebserviceIntersectMoodle($idnumbers = array()){
     return array_values($DB->get_records_list('user', 'idnumber', $idnumbers, '','id, firstname, lastname, idnumber'));
 }
 
+/**
+ * For a given array of users and photo paths, insert the photo into Moodle
+ * @global type $DB, $CFG
+ * @param $userid array of Moodle user id keys for users to update
+ * @param $picture_path array of Moodle temp photos downloaded to update
+ */
 function mypic_insert_picture($userid, $picture_path) {
     global $DB, $CFG;
 
@@ -63,34 +96,29 @@ function mypic_insert_picture($userid, $picture_path) {
     $dir        = array_pop($pathparts);
     $shortpath  = $dir.'/'.$file;
     
-    if(!file_exists($picture_path)){
-//        Removed until we migrate to the new events system.
-//        add_to_log(0, 'my_pic', "insert picture",'',sprintf("File %s does not exist for user %s", $shortpath, $userid));
+    if(!file_exists($picture_path)) {
         return false;
-    }elseif($picture_path == $CFG->dirroot . '/blocks/my_picture/images/nopic.png'){
-//        Removed until we migrate to the new events system.
-//        add_to_log(0, 'my_pic', "insert picture",'',sprintf("1-byte file %s for user %s", $shortpath, $userid));
+    }elseif($picture_path == $CFG->dirroot . '/blocks/my_picture/images/nopic.png') {
         try{
             process_new_icon($context, 'user', 'icon', 0, $picture_path);
             return $DB->set_field('user', 'picture', 2, array('id' => $userid));
-        }catch(Exception $e){
-//            Removed until we migrate to the new events system.
-//            add_to_log(0, 'my_pic', "insert picture",'',sprintf("Exception '%s' caught while trying to insert nopic.jpg for user %s", $e->message, $userid));
+        }catch(Exception $e) {
         }
-    }else{
-        try{
+    } else {
+        try {
             process_new_icon($context, 'user', 'icon', 0, $picture_path);
             return $DB->set_field('user', 'picture', 1, array('id' => $userid));
-        }catch(Exception $e){
-//            Removed until we migrate to the new events system.
-//            add_to_log(0, 'my_pic', "insert picture",'',sprintf("Exception '%s' caught while trying to insert picture for user %s", $e->message, $userid));
+        } catch(Exception $e) {
         }
     }
-//        Removed by Jason Peak at some earlier time.
-//        add_to_log(0, 'my_pic', "insert picture",'',sprintf("Unknown failure for file %s for user %s", $shortpath, $userid));
-//        return false;
 }
 
+/**
+ * For a given array of user ids, insert the "nopic" photo for users without photos in the ID system
+ * @global type $CFG
+ * @param $userid array of Moodle user id keys to fetch users with
+ * @return stdClass[] userids and the path for the "nopic" image
+ */
 function mypic_insert_nopic($userid) {
     global $CFG;
 
@@ -99,6 +127,12 @@ function mypic_insert_nopic($userid) {
     return mypic_insert_picture($userid, $nopic_path);
 }
 
+/**
+ * For a given array of user ids, insert the "badid" photo for users without idnumbers
+ * @global type $CFG
+ * @param $userid array of Moodle user id keys to fetch users with
+ * @return stdClass[] userids and the path for the temporary "badid" image
+ */
 function mypic_insert_badid($userid) {
     global $CFG;
 
@@ -174,24 +208,31 @@ function mypic_fetch_picture($idnumber, $updating = false) {
     }
 }
 
+/**
+ * For a given array of user idnumbers, determine if they are valid or not
+ * @param $idnumber array of Moodle user idnumbers
+ * @return boolean true or false depending on result
+ */
 function mypic_is_lsuid($idnumber) {
     return preg_match('/^89\d{7}$/', $idnumber);
 }
 
-// Return values:
-// 0 - Error
-// 1 - Bad idnumber, 'contact moodle admin' picture inserted
-// 2 - Success, tiger card office picture inserted
-// 3 - Picture not found, 'visit tiger card office' picture inserted
+/**
+ * For a given array of user ids, insert the "badid" photo for users without idnumbers
+ * @global type $CFG
+ * @param $user array of Moodle users
+ * @param $updating overwritten with path if one exists, if not false
+ * @return int[] webservice result
+ * 0 - Error
+ * 1 - Bad idnumber, 'contact moodle admin' picture inserted
+ * 2 - Success, tiger card office picture inserted
+ * 3 - Picture not found, 'visit tiger card office' picture inserted
+ */
 function mypic_update_picture($user, $updating=false) {
 
     if (!mypic_is_lsuid($user->idnumber)) {
         $u  = isset($user->username) ? $user->username : '<not set>';
         $id = isset($user->idnumber) ? $user->idnumber : '<not set>';
-
-//        Removed until we migrate to the new events system.
-//        add_to_log(0, 'my_pic', "update picture", '', sprintf("bad id %s for user %s", $id, $u));
-
         return (int) mypic_insert_badid($user->id);
     }
 
@@ -203,6 +244,13 @@ function mypic_update_picture($user, $updating=false) {
     return 0;
 }
 
+/**
+ * @param $users, array of Moodle users
+ * @param $updating, overwritten with path if one exists, if not false
+ * @param $sep, seperator for displaying data in mtrace  
+ * @param $step, number of users per update. Set to 100.
+ * @return object showing the count, number of updates, errors, nopics, and badids
+ */
 function mypic_batch_update($users, $updating=false, $sep='', $step=100) {
     $_s = function($k, $a=null) {
         return get_string($k, 'block_my_picture', $a);
@@ -259,6 +307,10 @@ function mypic_batch_update($users, $updating=false, $sep='', $step=100) {
         );
 }
 
+/**
+ * Verifies the web service exists otherwise exits
+ * @return boolean
+ */
 function mypic_verifyWebserviceExists(){
     $ready = get_config('block_my_picture', 'ready_url');
     $curl  = curl_init($ready);

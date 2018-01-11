@@ -14,19 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * @package   block_my_picture
- * @copyright 2014 Adam Zapletal
- * @copyright 2017 Robert Russo
- * @copyright 2014 onwardsLouisiana State University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+ * Setting up the scheduled task.
+ *
+ * Grabs photos from the LSU Web Service.
+ *
+ * @package    block_my_picture
+ * @copyright  2017 Robert Russo, Louisiana State University
+ */ 
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2018011000;
-$plugin->requires = 2015051102;
-$plugin->cron = 3600;
-$plugin->component = 'block_my_picture';
-$plugin->maturity = MATURITY_STABLE;
+// Define the task defaults.
+$tasks = array(
+    array(
+        'classname' => 'block_my_picture\task\grab_mypictures',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    )
+);
