@@ -92,16 +92,4 @@ class block_my_picture extends block_list {
 
         return $this->content;
     }
-
-/*
-    public function tsStartTimeForRecentUpdates(){
-        global $DB;
-        // Chosen time would either be cron time, or the last run time as GMT
-        $params     = array('name' => 'my_picture');
-        $cron       = $DB->get_field('block', 'cron', $params);
-        $lastcron   = $DB->get_field('block', 'lastcron', $params);
-
-        return strtotime(gmdate('MdYH',min(time() - $cron, $lastcron)));
-    }
-*/
 }

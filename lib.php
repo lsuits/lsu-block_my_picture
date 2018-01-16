@@ -42,34 +42,6 @@ function mypic_get_users_without_pictures($limit=0) {
 
 
 /**
- * NB: Using the config 'ready_url', this corresponds to API docs for 'recently_updated'
- * @param type $start_time how far back to check for users marked as 'updated' 
- * in the external system
- * @return mixed array
- */
-/*
-function mypic_get_users_updated_pictures($start_time) {
-
-    $start_date = strftime("%Y%m%d%H", $start_time);
-
-    $ready_url = get_config('block_my_picture', 'ready_url');
-
-    $curl = new curl();
-    $json = $curl->get(sprintf($ready_url, $start_date));
-
-    $res = json_decode($json);
-
-    $to_moodle = function($user) {
-        return $user->id_number;
-    };
-
-    $validUsers = mypic_WebserviceIntersectMoodle(array_map($to_moodle, $res->users));
-
-    return empty($res->users) ? array() : $validUsers;
-}
-*/
-
-/**
  * For a given array of idnumbers, return only the subset that are valid in the database
  * @global type $DB
  * @param int[] $idnumbers array of idnumber keys to fetch users with
@@ -201,7 +173,7 @@ function mypic_fetch_picture($idnumber, $updating = false) {
         return $path;
     } else if ($responseCode != '404 Not Found') {
         echo(get_string('cron_webservice_err', 'block_my_picture')); 
-        exit;
+        return false;
     } else {
         unlink($path);
         return false;
@@ -231,8 +203,6 @@ function mypic_is_lsuid($idnumber) {
 function mypic_update_picture($user, $updating=false) {
 
     if (!mypic_is_lsuid($user->idnumber)) {
-        $u  = isset($user->username) ? $user->username : '<not set>';
-        $id = isset($user->idnumber) ? $user->idnumber : '<not set>';
         return (int) mypic_insert_badid($user->id);
     }
 

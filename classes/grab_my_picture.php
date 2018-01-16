@@ -60,14 +60,11 @@ class grab_my_picture {
         if (get_config('block_my_picture', 'fetch')) {
             $limit = get_config('block_my_picture', 'cron_users');
             $users = mypic_get_users_without_pictures($limit);
-        } else {
-            $users = mypic_get_users_updated_pictures($this->tsStartTimeForRecentUpdates());
-        }
-
-        if (!$users) {
-            mtrace($_s('no_missing_pictures'));
-        } else {
-            mypic_batch_update($users);
+            if (!$users) {
+                mtrace($_s('no_missing_pictures'));
+            } else {
+                mypic_batch_update($users);
+            }
         }
 
         return true;
